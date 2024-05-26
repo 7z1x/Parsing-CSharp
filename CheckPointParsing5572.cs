@@ -982,5 +982,177 @@ namespace Parsing
             }
         }
 
+        public static bool Point68(Parsing form1, JArray jsonArray)
+        {
+            TextBox msgBox = form1.GetMessageBox();
+            try
+            {
+                bool hasError = false;
+
+                foreach (var subsystem in jsonArray)
+                {
+                    if (subsystem["model"] is JArray model)
+                    {
+                        foreach (var item in model)
+                        {
+                            if (item["processes"] is JArray processes)
+                            {
+                                foreach (var process in processes)
+                                {
+                                    var processType = process["process_type"]?.ToString();
+                                    var processId = process["process_id"]?.ToString();
+                                    var dataStore = process["data_store"]?.ToString();
+
+                                    // Check if it's an event generator involving TIMER data store
+                                    if (processType == "event_generator" && dataStore == "TIMER")
+                                    {
+                                        if (processId == "TIM.1")
+                                        {
+                                            if (process["process_name"]?.ToString() != "setTimer")
+                                            {
+                                                msgBox.AppendText($"Syntax error 68: Event generator process {processId} should be named 'setTimer'.\r\n");
+                                                hasError = true;
+                                            }
+                                        }
+                                        else if (processId == "TIM.2")
+                                        {
+                                            if (process["process_name"]?.ToString() != "resetTimer")
+                                            {
+                                                msgBox.AppendText($"Syntax error 68: Event generator process {processId} should be named 'resetTimer'.\r\n");
+                                                hasError = true;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            msgBox.AppendText($"Syntax error 68: Invalid event generator process ID {processId} for TIMER data store. Expected 'TIM.1' or 'TIM.2'.\r\n");
+                                            hasError = true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (!hasError)
+                {
+                    msgBox.AppendText("Success 68: All timer event generator processes have correct names.\r\n");
+                }
+
+                return !hasError;
+            }
+            catch (Exception ex)
+            {
+                msgBox.AppendText("Syntax error 68: " + ex.Message + "\r\n");
+                return false;
+            }
+        }
+
+        public static bool Point69(Parsing form1, JArray jsonArray)
+        {
+            TextBox msgBox = form1.GetMessageBox();
+            try
+            {
+                var stateModelToKeyLetter = new Dictionary<string, string>();
+                var dataStoreToKeyLetter = new Dictionary<string, string>();
+                bool hasError = false;
+
+                // Map state models to KeyLetters
+                foreach (var subsystem in jsonArray)
+                {
+                    if (subsystem["model"] is JArray model)
+                    {
+                        foreach (var item in model)
+                        {
+                            var itemType = item["type"]?.ToString();
+                            var classId = item["class_id"]?.ToString();
+                            var keyLetter = item["KL"]?.ToString();
+
+                            if (itemType == "class" && !string.IsNullOrWhiteSpace(classId) && !string.IsNullOrWhiteSpace(keyLetter))
+                            {
+                                stateModelToKeyLetter[classId] = keyLetter;
+
+                                // If the class has a data store, map it to KeyLetter as well
+                                var dataStore = item["data_store"]?.ToString();
+                                if (!string.IsNullOrWhiteSpace(dataStore))
+                                {
+                                    dataStoreToKeyLetter[dataStore] = keyLetter;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Check each test process
+                foreach (var subsystem in jsonArray)
+                {
+                    if (subsystem["model"] is JArray model)
+                    {
+                        foreach (var item in model)
+                        {
+                            if (item["processes"] is JArray processes)
+                            {
+                                foreach (var process in processes)
+                                {
+                                    var processType = process["process_type"]?.ToString();
+                                    var processId = process["process_id"]?.ToString();
+
+                                    // Check if it's a test process
+                                    if (processType == "test")
+                                    {
+                                        var stateModelId = process["state_model_id"]?.ToString();
+                                        if (string.IsNullOrWhiteSpace(stateModelId))
+                                        {
+                                            msgBox.AppendText($"Syntax error 69: Test process {processId} is missing state_model_id.\r\n");
+                                            hasError = true;
+                                            continue;
+                                        }
+
+                                        if (!stateModelToKeyLetter.TryGetValue(stateModelId, out var expectedKeyLetter))
+                                        {
+                                            msgBox.AppendText($"Syntax error 69: State model with ID {stateModelId} is not mapped to any KeyLetter.\r\n");
+                                            hasError = true;
+                                            continue;
+                                        }
+
+                                        var processKeyLetter = processId?.Split('.')[0];
+                                        if (processKeyLetter != expectedKeyLetter)
+                                        {
+                                            msgBox.AppendText($"Syntax error 69: Test process {processId} has KeyLetter {processKeyLetter} which does not match the expected KeyLetter {expectedKeyLetter} for state model {stateModelId}.\r\n");
+                                            hasError = true;
+                                        }
+
+                                        // Check if it accesses data store
+                                        var dataStore = process["data_store"]?.ToString();
+                                        if (!string.IsNullOrWhiteSpace(dataStore) && dataStoreToKeyLetter.TryGetValue(dataStore, out var dataStoreKeyLetter))
+                                        {
+                                            if (dataStoreKeyLetter != expectedKeyLetter)
+                                            {
+                                                msgBox.AppendText($"Syntax error 69: Test process {processId} accesses data store {dataStore} with KeyLetter {dataStoreKeyLetter} which does not match the expected KeyLetter {expectedKeyLetter} for state model {stateModelId}.\r\n");
+                                                hasError = true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (!hasError)
+                {
+                    msgBox.AppendText("Success 69: All test processes have correct KeyLetters.\r\n");
+                }
+
+                return !hasError;
+            }
+            catch (Exception ex)
+            {
+                msgBox.AppendText("Syntax error 69: " + ex.Message + "\r\n");
+                return false;
+            }
+        }
+
+
     }
 }
