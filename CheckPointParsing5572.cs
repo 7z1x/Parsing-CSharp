@@ -1153,6 +1153,263 @@ namespace Parsing
             }
         }
 
+        public static bool Point70(Parsing form1, JArray jsonArray)
+        {
+            TextBox msgBox = form1.GetMessageBox();
+            try
+            {
+                var objectToKeyLetter = new Dictionary<string, string>();
+                var dataStoreToObject = new Dictionary<string, string>();
+                var objectAccessModel = new List<Tuple<string, string, string>>(); // Tuple<SourceObject, TargetObject, ProcessId>
 
+                // Map objects to KeyLetters and data stores to objects
+                foreach (var subsystem in jsonArray)
+                {
+                    if (subsystem["model"] is JArray model)
+                    {
+                        foreach (var item in model)
+                        {
+                            var itemType = item["type"]?.ToString();
+                            var objectId = item["class_id"]?.ToString();
+                            var keyLetter = item["KL"]?.ToString();
+                            var dataStore = item["data_store"]?.ToString();
+
+                            if (itemType == "class" && !string.IsNullOrWhiteSpace(objectId) && !string.IsNullOrWhiteSpace(keyLetter))
+                            {
+                                objectToKeyLetter[objectId] = keyLetter;
+
+                                if (!string.IsNullOrWhiteSpace(dataStore))
+                                {
+                                    dataStoreToObject[dataStore] = objectId;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Check each process in state models
+                foreach (var subsystem in jsonArray)
+                {
+                    if (subsystem["model"] is JArray model)
+                    {
+                        foreach (var item in model)
+                        {
+                            if (item["state_diagram"] is JArray stateDiagram)
+                            {
+                                foreach (var state in stateDiagram)
+                                {
+                                    if (state["actions"] is JArray actions)
+                                    {
+                                        foreach (var action in actions)
+                                        {
+                                            var actionType = action["action_type"]?.ToString();
+                                            var actionId = action["action_id"]?.ToString();
+                                            var processId = action["process_id"]?.ToString();
+                                            var dataStore = action["data_store"]?.ToString();
+
+                                            if (actionType == "access" && !string.IsNullOrWhiteSpace(dataStore))
+                                            {
+                                                if (dataStoreToObject.TryGetValue(dataStore, out var targetObjectId))
+                                                {
+                                                    var sourceObjectId = action["class_id"]?.ToString();
+
+                                                    if (!string.IsNullOrWhiteSpace(sourceObjectId) && !string.IsNullOrWhiteSpace(targetObjectId))
+                                                    {
+                                                        objectAccessModel.Add(new Tuple<string, string, string>(sourceObjectId, targetObjectId, processId));
+                                                    }
+                                                    else
+                                                    {
+                                                        msgBox.AppendText($"Syntax error 70: Missing source or target object ID for action {actionId} accessing data store {dataStore}.\r\n");
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    msgBox.AppendText($"Syntax error 70: Data store {dataStore} is not mapped to any object.\r\n");
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Validate object access model
+                foreach (var access in objectAccessModel)
+                {
+                    var sourceObject = access.Item1;
+                    var targetObject = access.Item2;
+                    var processId = access.Item3;
+
+                    if (objectToKeyLetter.TryGetValue(sourceObject, out var sourceKeyLetter) &&
+                        objectToKeyLetter.TryGetValue(targetObject, out var targetKeyLetter))
+                    {
+                        var expectedProcessId = $"{sourceKeyLetter}.{processId.Split('.')[1]}";
+
+                        if (processId != expectedProcessId)
+                        {
+                            msgBox.AppendText($"Syntax error 70: Process ID {processId} for action accessing from {sourceKeyLetter} to {targetKeyLetter} should be {expectedProcessId}.\r\n");
+                            return false;
+
+                        }
+                    }
+                    else
+                    {
+                        msgBox.AppendText($"Syntax error 70: Source or target object not found in key letter mapping.\r\n");
+                        return false;
+
+                    }
+                }
+                    msgBox.AppendText($"Success 70:\r\n");
+                    return true;
+                
+            }
+            catch (Exception ex)
+            {
+                msgBox.AppendText("Syntax error 70: " + ex.Message + "\r\n");
+                return false;
+            }
+        }
+
+        public static bool Point71(Parsing form1, JArray jsonArray)
+        {
+            TextBox msgBox = form1.GetMessageBox();
+            try
+            {
+                HashSet<string> domainSubsystems = new HashSet<string>();
+                HashSet<string> communicationModelSubsystems = new HashSet<string>();
+
+                // Identify all subsystems in the domain
+                foreach (var subsystem in jsonArray)
+                {
+                    var subName = subsystem["sub_name"]?.ToString();
+                    if (!string.IsNullOrWhiteSpace(subName))
+                    {
+                        domainSubsystems.Add(subName);
+                    }
+                }
+
+                // Check if each subsystem appears in the Subsystem Communication Model
+                foreach (var subsystem in jsonArray)
+                {
+                    if (subsystem["communication_model"] is JArray communicationModel)
+                    {
+                        foreach (var item in communicationModel)
+                        {
+                            var communicationModelSubName = item["sub_name"]?.ToString();
+                            if (!string.IsNullOrWhiteSpace(communicationModelSubName))
+                            {
+                                communicationModelSubsystems.Add(communicationModelSubName);
+                            }
+                        }
+                    }
+                }
+
+                // Check if all domain subsystems appear in the Subsystem Communication Model
+                foreach (var subName in domainSubsystems)
+                {
+                    if (!communicationModelSubsystems.Contains(subName))
+                    {
+                        msgBox.AppendText($"Syntax error 71: Subsystem '{subName}' does not appear in the Subsystem Communication Model.\r\n");
+                        return false;
+
+                    }
+                }
+                msgBox.AppendText($"Success 71:\r\n");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                msgBox.AppendText("Syntax error 71: " + ex.Message + "\r\n");
+                return false;
+            }
+        }
+
+        public static bool Point72(Parsing form1, JArray jsonArray)
+        {
+            TextBox msgBox = form1.GetMessageBox();
+            try
+            {
+                Dictionary<string, HashSet<string>> subsystemGeneratedEvents = new Dictionary<string, HashSet<string>>();
+                Dictionary<string, HashSet<string>> subsystemReceivedEvents = new Dictionary<string, HashSet<string>>();
+
+                // Identify events generated and received by state models in each subsystem
+                foreach (var subsystem in jsonArray)
+                {
+                    var subName = subsystem["sub_name"]?.ToString();
+                    if (!string.IsNullOrWhiteSpace(subName))
+                    {
+                        var generatedEvents = new HashSet<string>();
+                        var receivedEvents = new HashSet<string>();
+
+                        if (subsystem["model"] is JArray model)
+                        {
+                            foreach (var item in model)
+                            {
+                                if (item["state_diagram"] is JArray stateDiagram)
+                                {
+                                    foreach (var state in stateDiagram)
+                                    {
+                                        if (state["actions"] is JArray actions)
+                                        {
+                                            foreach (var action in actions)
+                                            {
+                                                var actionType = action["action_type"]?.ToString();
+                                                var eventName = action["event_name"]?.ToString();
+
+                                                if (actionType == "generate" && !string.IsNullOrWhiteSpace(eventName))
+                                                {
+                                                    generatedEvents.Add(eventName);
+                                                }
+                                                else if (actionType == "receive" && !string.IsNullOrWhiteSpace(eventName))
+                                                {
+                                                    receivedEvents.Add(eventName);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        subsystemGeneratedEvents[subName] = generatedEvents;
+                        subsystemReceivedEvents[subName] = receivedEvents;
+                    }
+                }
+
+                // Check if events generated and received between subsystems appear in the Subsystem Communication Model
+                foreach (var senderEntry in subsystemGeneratedEvents)
+                {
+                    var senderSub = senderEntry.Key;
+                    var senderEvents = senderEntry.Value;
+
+                    foreach (var receiverEntry in subsystemReceivedEvents)
+                    {
+                        var receiverSub = receiverEntry.Key;
+                        var receiverEvents = receiverEntry.Value;
+
+                        if (senderSub != receiverSub)
+                        {
+                            foreach (var evt in senderEvents)
+                            {
+                                if (receiverEvents.Contains(evt))
+                                {
+                                    msgBox.AppendText($"Syntax error 72: Event '{evt}' generated by state model in '{senderSub}' and received by state model in '{receiverSub}' must appear in the Subsystem Communication Model.\r\n");
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
+                msgBox.AppendText("Success 72:  \r\n");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                msgBox.AppendText("Syntax error 72: " + ex.Message + "\r\n");
+                return false;
+            }
+        }
     }
 }
