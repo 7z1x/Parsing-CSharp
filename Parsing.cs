@@ -23,10 +23,17 @@ namespace Parsing
         {
             FolderBrowserDialog folderDialog = new FolderBrowserDialog();
 
+            if (!string.IsNullOrEmpty(Properties.Settings.Default.LastFolderPath))
+            {
+                folderDialog.SelectedPath = Properties.Settings.Default.LastFolderPath;
+            }
+
             if (folderDialog.ShowDialog() == DialogResult.OK)
             {
                 string folderPath = folderDialog.SelectedPath;
                 txtPath.Text = folderPath;
+                Properties.Settings.Default.LastFolderPath = folderPath;
+                Properties.Settings.Default.Save();
                 ProcessFilesInFolder(folderPath);
             }
         }
@@ -113,6 +120,8 @@ namespace Parsing
             ParsingPoint.Point35(this, jsonArray);
 
             CheckParsing1115.Point99(this, jsonArray);
+
+            CheckPointParsing3654.Point36(this, jsonArray);
 
             CheckParsing5572.Point55(this, jsonArray);
             CheckParsing5572.Point56(this, jsonArray);
