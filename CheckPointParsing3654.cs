@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Parsing
 {
-    public static class Point3654
+    public static class CheckPointParsing3654
     {
         public static bool Point36(Parsing form1, JArray jsonArray)
         {

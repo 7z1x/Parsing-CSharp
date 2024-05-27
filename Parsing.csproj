@@ -61,7 +61,7 @@
     </Compile>
     <Compile Include="CheckPointParsing15.cs" />
     <Compile Include="ParsingPoint.cs" />
-    <Compile Include="Point3654.cs" />
+    <Compile Include="CheckPointParsing3654.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Parsing.resx">
