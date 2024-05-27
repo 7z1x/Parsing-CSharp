@@ -52,7 +52,6 @@
     <Compile Include="CheckPointParsing1115.cs" />
     <Compile Include="CheckPointParsing5572.cs" />
     <Compile Include="CheckPointParsing610.cs" />
-    <Compile Include="Class1.cs" />
     <Compile Include="Parsing.cs">
       <SubType>Form</SubType>
     </Compile>
