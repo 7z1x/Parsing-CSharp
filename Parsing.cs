@@ -129,9 +129,9 @@ namespace Parsing
             CheckParsing5572.Point67(this, jsonArray);
             CheckParsing5572.Point68(this, jsonArray);
             CheckParsing5572.Point69(this, jsonArray);
-            //CheckParsing5572.Point70(this, jsonArray);
-            //CheckParsing5572.Point71(this, jsonArray);
-            //CheckParsing5572.Point72(this, jsonArray);
+            CheckParsing5572.Point70(this, jsonArray);
+            CheckParsing5572.Point71(this, jsonArray);
+            CheckParsing5572.Point72(this, jsonArray);
 
 
             if (string.IsNullOrWhiteSpace(msgBox.Text))
