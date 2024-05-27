@@ -52,6 +52,7 @@
     <Compile Include="CheckPointParsing1115.cs" />
     <Compile Include="CheckPointParsing5572.cs" />
     <Compile Include="CheckPointParsing610.cs" />
+    <Compile Include="Class1.cs" />
     <Compile Include="Parsing.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -60,6 +61,7 @@
     </Compile>
     <Compile Include="CheckPointParsing15.cs" />
     <Compile Include="ParsingPoint.cs" />
+    <Compile Include="Point3654.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Parsing.resx">
