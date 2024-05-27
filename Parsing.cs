@@ -23,17 +23,10 @@ namespace Parsing
         {
             FolderBrowserDialog folderDialog = new FolderBrowserDialog();
 
-            if (!string.IsNullOrEmpty(Properties.Settings.Default.LastFolderPath))
-            {
-                folderDialog.SelectedPath = Properties.Settings.Default.LastFolderPath;
-            }
-
             if (folderDialog.ShowDialog() == DialogResult.OK)
             {
                 string folderPath = folderDialog.SelectedPath;
                 txtPath.Text = folderPath;
-                Properties.Settings.Default.LastFolderPath = folderPath;
-                Properties.Settings.Default.Save();
                 ProcessFilesInFolder(folderPath);
             }
         }
@@ -121,26 +114,24 @@ namespace Parsing
 
             CheckParsing1115.Point99(this, jsonArray);
 
-            //CheckParsing5572.Point55(this, jsonArray);
-            //CheckParsing5572.Point56(this, jsonArray);
-            //CheckParsing5572.Point57(this, jsonArray);
-            //CheckParsing5572.Point58(this, jsonArray);
-            //CheckParsing5572.Point59(this, jsonArray);
-            //CheckParsing5572.Point60(this, jsonArray);
-            //CheckParsing5572.Point61(this, jsonArray);
-            //CheckParsing5572.Point62(this, jsonArray);
-            //CheckParsing5572.Point63(this, jsonArray);
-            //CheckParsing5572.Point64(this, jsonArray);
-            //CheckParsing5572.Point65(this, jsonArray);
-            //CheckParsing5572.Point66(this, jsonArray);
-            //CheckParsing5572.Point67(this, jsonArray);
-            //CheckParsing5572.Point68(this, jsonArray);
-            //CheckParsing5572.Point69(this, jsonArray);
-
-            CheckPointParsing3654.Point36(this, jsonArray);
-            //CheckParsing5572.Point70(this, jsonArray);
-            //CheckParsing5572.Point71(this, jsonArray);
-            //CheckParsing5572.Point72(this, jsonArray);
+            CheckParsing5572.Point55(this, jsonArray);
+            CheckParsing5572.Point56(this, jsonArray);
+            CheckParsing5572.Point57(this, jsonArray);
+            CheckParsing5572.Point58(this, jsonArray);
+            CheckParsing5572.Point59(this, jsonArray);
+            CheckParsing5572.Point60(this, jsonArray);
+            CheckParsing5572.Point61(this, jsonArray);
+            CheckParsing5572.Point62(this, jsonArray);
+            CheckParsing5572.Point63(this, jsonArray);
+            CheckParsing5572.Point64(this, jsonArray);
+            CheckParsing5572.Point65(this, jsonArray);
+            CheckParsing5572.Point66(this, jsonArray);
+            CheckParsing5572.Point67(this, jsonArray);
+            CheckParsing5572.Point68(this, jsonArray);
+            CheckParsing5572.Point69(this, jsonArray);
+            CheckParsing5572.Point70(this, jsonArray);
+            CheckParsing5572.Point71(this, jsonArray);
+            CheckParsing5572.Point72(this, jsonArray);
 
 
             if (string.IsNullOrWhiteSpace(msgBox.Text))
