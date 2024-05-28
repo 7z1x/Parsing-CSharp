@@ -129,6 +129,7 @@ namespace Parsing
             CheckPointParsing3654.Point41(this, jsonArray);
             CheckPointParsing3654.Point42(this, jsonArray);
             CheckPointParsing3654.Point43(this, jsonArray);
+            CheckPointParsing3654.Point44(this, jsonArray);
 
             //CheckParsing5572.Point55(this, jsonArray);
             //CheckParsing5572.Point56(this, jsonArray);
