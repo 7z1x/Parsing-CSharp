@@ -551,50 +551,42 @@ namespace Parsing
             }
         }
 
-         public static bool Point45(Parsing form1, JArray jsonArray)
+        public static bool Point45(Parsing form1, JArray jsonArray)
         {
             TextBox msgBox = form1.GetMessageBox();
             try
             {
-                // Dictionary to track data stores and their occurrences
-                Dictionary<string, List<string>> dataStoreOccurrences = new Dictionary<string, List<string>>();
+                HashSet<string> dataStoreIds = new HashSet<string>();
 
-                // Traverse through each item in the JSON array
-                foreach (var item in jsonArray)
+                foreach (var subsystem in jsonArray)
                 {
-                    if (item["type"]?.ToString() == "subsystem" && item["model"] is JArray model)
+                    if (subsystem["model"] is JArray model)
                     {
                         foreach (var element in model)
                         {
-                            // Handle different types of model elements
-                            string className = element["class_name"]?.ToString();
-                            string classId = element["class_id"]?.ToString();
-
-                            if (!string.IsNullOrEmpty(className) && !string.IsNullOrEmpty(classId))
+                            if (element["type"]?.ToString() == "dataStore")
                             {
-                                // Record the occurrence of the data store
-                                if (!dataStoreOccurrences.ContainsKey(classId))
+                                var dataStoreId = element["dataStoreId"]?.ToString();
+
+                                if (dataStoreIds.Contains(dataStoreId))
                                 {
-                                    dataStoreOccurrences[classId] = new List<string>();
+                                    // If the data store is already encountered, it's appearing multiple times
+                                    msgBox.AppendText($"Success 45: Data store '{dataStoreId}' appears in multiple places within the process model(s).\r\n");
+                                    return true;
                                 }
-                                dataStoreOccurrences[classId].Add(item["sub_id"]?.ToString());
+                                else
+                                {
+                                    // Add the data store ID to the HashSet
+                                    dataStoreIds.Add(dataStoreId);
+                                }
                             }
                         }
                     }
                 }
 
-                // Check for data stores appearing in multiple places
-                foreach (var entry in dataStoreOccurrences)
-                {
-                    if (entry.Value.Distinct().Count() < 2)
-                    {
-                        msgBox.AppendText($"Syntax error 45: The data store with class_id '{entry.Key}' does not appear in multiple places.\r\n");
-                        return false;
-                    }
-                }
-
-                msgBox.AppendText("Success 45: All data stores appear in multiple places in the process model(s).\r\n");
-                return true;
+                // If the loop completes without finding any duplicate data store, return false
+                msgBox.AppendText($"Syntax error 45: No data store appears in multiple places within the process model(s).\r\n");
+                return false;
             }
             catch (Exception ex)
             {
@@ -602,6 +594,7 @@ namespace Parsing
                 return false;
             }
         }
+
 
         public static bool Point46(Parsing form1, JArray jsonArray)
         {
@@ -644,6 +637,475 @@ namespace Parsing
             }
         }
 
+        public static bool Point47(Parsing form1, JArray jsonArray)
+        {
+            TextBox msgBox = form1.GetMessageBox();
+            try
+            {
+                foreach (var subsystem in jsonArray)
+                {
+                    if (subsystem["model"] is JArray model)
+                    {
+                        foreach (var element in model)
+                        {
+                            if (element["type"]?.ToString() == "process" && element["controlFlows"] is JArray controlFlows)
+                            {
+                                foreach (var controlFlow in controlFlows)
+                                {
+                                    var condition = controlFlow["condition"]?.ToString();
+                                    var destination = controlFlow["destination"]?.ToString();
+
+                                    // Ensure unconditional control flows are unlabelled
+                                    if (condition == null && controlFlow["label"] != null)
+                                    {
+                                        msgBox.AppendText($"Syntax error 47: The unconditional control flow to '{destination}' should not have a label.\r\n");
+                                        return false;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // If all checks pass, append success message
+                msgBox.AppendText("Success 47: All unconditional control flows are correctly unlabelled.\r\n");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                msgBox.AppendText("Syntax error 47: " + ex.Message + "\r\n");
+                return false;
+            }
+        }
+
+        public static bool Point48(Parsing form1, JArray jsonArray)
+        {
+            TextBox msgBox = form1.GetMessageBox();
+            try
+            {
+                foreach (var subsystem in jsonArray)
+                {
+                    if (subsystem["model"] is JArray model)
+                    {
+                        foreach (var element in model)
+                        {
+                            // Process the conditional and unconditional data flows
+                            if (element["type"]?.ToString() == "process")
+                            {
+                                if (element["dataFlows"] is JArray dataFlows)
+                                {
+                                    foreach (var dataFlow in dataFlows)
+                                    {
+                                        var dataFlowType = dataFlow["type"]?.ToString();
+                                        var dataFlowLabel = dataFlow["label"]?.ToString();
+
+                                        // Ensure the data flow is labeled with data elements it carries
+                                        if (string.IsNullOrEmpty(dataFlowLabel))
+                                        {
+                                            msgBox.AppendText($"Syntax error 48: A {dataFlowType} data flow in process '{element["name"]}' is not labeled with the names of the data elements it carries.\r\n");
+                                            return false;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // If all checks pass, append success message
+                msgBox.AppendText("Success 48: All data flows are correctly labeled with the names of the data elements they carry.\r\n");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                msgBox.AppendText("Syntax error 48: " + ex.Message + "\r\n");
+                return false;
+            }
+        }
+
+        public static bool Point49(Parsing form1, JArray jsonArray)
+        {
+            TextBox msgBox = form1.GetMessageBox();
+            try
+            {
+                foreach (var subsystem in jsonArray)
+                {
+                    if (subsystem["model"] is JArray model)
+                    {
+                        foreach (var element in model)
+                        {
+                            if (element["type"]?.ToString() == "process")
+                            {
+                                var processName = element["name"]?.ToString();
+                                var dataFlows = element["dataFlows"] as JArray;
+
+                                if (dataFlows != null)
+                                {
+                                    foreach (var dataFlow in dataFlows)
+                                    {
+                                        var target = dataFlow["target"]?.ToString();
+                                        var label = dataFlow["label"]?.ToString();
+
+                                        if (string.IsNullOrEmpty(target) || string.IsNullOrEmpty(label))
+                                        {
+                                            msgBox.AppendText($"Syntax error 49: Data flow in process '{processName}' must have a target and a label.\r\n");
+                                            return false;
+                                        }
+
+                                        // Assuming the label should contain attributes read or written by the process
+                                        bool validLabel = false;
+                                        foreach (var elementModel in model)
+                                        {
+                                            if (elementModel["type"]?.ToString() == "class" &&
+                                                elementModel["class_name"]?.ToString() == target)
+                                            {
+                                                var attributes = elementModel["attributes"] as JArray;
+                                                if (attributes != null)
+                                                {
+                                                    foreach (var attribute in attributes)
+                                                    {
+                                                        var attributeName = attribute["attribute_name"]?.ToString();
+                                                        if (label.Contains(attributeName))
+                                                        {
+                                                            validLabel = true;
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                                break;
+                                            }
+                                        }
+
+                                        if (!validLabel)
+                                        {
+                                            msgBox.AppendText($"Syntax error 49: Data flow from process '{processName}' to '{target}' has an invalid label '{label}'.\r\n");
+                                            return false;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // If all checks pass, append success message
+                msgBox.AppendText("Success 49: All data flows between processes and object data stores are correctly labeled.\r\n");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                msgBox.AppendText("Syntax error 49: " + ex.Message + "\r\n");
+                return false;
+            }
+        }
+
+        public static bool Point50(Parsing form1, JArray jsonArray)
+        {
+            TextBox msgBox = form1.GetMessageBox();
+            try
+            {
+                foreach (var subsystem in jsonArray)
+                {
+                    if (subsystem["model"] is JArray model)
+                    {
+                        foreach (var element in model)
+                        {
+                            if (element["type"]?.ToString() == "process")
+                            {
+                                var processName = element["name"]?.ToString();
+                                var dataFlows = element["dataFlows"] as JArray;
+
+                                if (dataFlows != null)
+                                {
+                                    foreach (var dataFlow in dataFlows)
+                                    {
+                                        var dataFlowName = dataFlow["name"]?.ToString();
+                                        var attributes = dataFlow["attributes"] as JArray;
+
+                                        // Validate each data flow
+                                        bool isValidDataFlow = false;
+
+                                        if (attributes != null)
+                                        {
+                                            foreach (var attribute in attributes)
+                                            {
+                                                var attributeName = attribute["name"]?.ToString();
+                                                var attributeType = attribute["type"]?.ToString();
+
+                                                if (attributeName != null && attributeType != null)
+                                                {
+                                                    // Check if the attribute represents object attributes or transient data
+                                                    if (attributeType == "object_attribute" || attributeType == "transient_data")
+                                                    {
+                                                        isValidDataFlow = true;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        if (!isValidDataFlow)
+                                        {
+                                            msgBox.AppendText($"Syntax error 50: The data flow '{dataFlowName}' in process '{processName}' does not represent valid object attributes or transient data.\r\n");
+                                            return false;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // If all checks pass, append success message
+                msgBox.AppendText("Success 50: All data flows between processes represent valid object attributes or transient data.\r\n");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                msgBox.AppendText("Syntax error 50: " + ex.Message + "\r\n");
+                return false;
+            }
+        }
+
+        public static bool Point51(Parsing form1, JArray jsonArray)
+        {
+            TextBox msgBox = form1.GetMessageBox();
+            try
+            {
+                foreach (var subsystem in jsonArray)
+                {
+                    if (subsystem["model"] is JArray model)
+                    {
+                        foreach (var element in model)
+                        {
+                            if (element["type"]?.ToString() == "process")
+                            {
+                                var processName = element["name"]?.ToString();
+                                var dataFlows = element["dataFlows"] as JArray;
+
+                                if (dataFlows != null)
+                                {
+                                    foreach (var dataFlow in dataFlows)
+                                    {
+                                        var dataFlowName = dataFlow["name"]?.ToString();
+                                        var attributes = dataFlow["attributes"] as JArray;
+
+                                        if (attributes != null)
+                                        {
+                                            foreach (var attribute in attributes)
+                                            {
+                                                var attributeName = attribute["name"]?.ToString();
+                                                var attributeType = attribute["type"]?.ToString();
+
+                                                // Check if the attribute represents transient data
+                                                if (attributeType == "transient_data")
+                                                {
+                                                    // Check if the data flow is labelled correctly
+                                                    if (dataFlowName == null || !dataFlowName.Contains("(transient)"))
+                                                    {
+                                                        msgBox.AppendText($"Syntax error 51: The transient data flow '{dataFlowName}' in process '{processName}' is not correctly labelled with (transient).\r\n");
+                                                        return false;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // If all checks pass, append success message
+                msgBox.AppendText("Success 51: All transient data flows between processes are correctly labelled with an appropriate variable name and (transient).\r\n");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                msgBox.AppendText("Syntax error 51: " + ex.Message + "\r\n");
+                return false;
+            }
+        }
+
+        public static bool Point52(Parsing form1, JArray jsonArray)
+        {
+            TextBox msgBox = form1.GetMessageBox();
+            try
+            {
+                foreach (var subsystem in jsonArray)
+                {
+                    if (subsystem["model"] is JArray model)
+                    {
+                        foreach (var element in model)
+                        {
+                            if (element["type"]?.ToString() == "process")
+                            {
+                                var processName = element["name"]?.ToString();
+                                var dataFlows = element["dataFlows"] as JArray;
+
+                                if (dataFlows != null)
+                                {
+                                    foreach (var dataFlow in dataFlows)
+                                    {
+                                        var dataFlowName = dataFlow["name"]?.ToString();
+                                        var attributes = dataFlow["attributes"] as JArray;
+
+                                        if (attributes != null)
+                                        {
+                                            foreach (var attribute in attributes)
+                                            {
+                                                var attributeName = attribute["name"]?.ToString();
+                                                var attributeType = attribute["type"]?.ToString();
+
+                                                // Check if the attribute represents persistent data
+                                                if (attributeType == "persistent_data")
+                                                {
+                                                    // Ensure the data flow is labelled correctly
+                                                    if (dataFlowName == null)
+                                                    {
+                                                        msgBox.AppendText($"Syntax error 52: The persistent data flow in process '{processName}' is not labelled.\r\n");
+                                                        return false;
+                                                    }
+
+                                                    var expectedLabel = $"{attribute["objectP"]}.{attribute["attribute1"]}={attribute["objectC"]}.{attribute["attribute2"]}";
+
+                                                    if (dataFlowName != expectedLabel && dataFlowName != attributeName)
+                                                    {
+                                                        msgBox.AppendText($"Syntax error 52: The persistent data flow '{dataFlowName}' in process '{processName}' is not labelled correctly. Expected label: '{expectedLabel}' or '{attributeName}'.\r\n");
+                                                        return false;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // If all checks pass, append success message
+                msgBox.AppendText("Success 52: All persistent data flows between processes are correctly labelled with the appropriate attribute names.\r\n");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                msgBox.AppendText("Syntax error 52: " + ex.Message + "\r\n");
+                return false;
+            }
+        }
+
+        public static bool Point53(Parsing form1, JArray jsonArray)
+        {
+            TextBox msgBox = form1.GetMessageBox();
+            try
+            {
+                foreach (var subsystem in jsonArray)
+                {
+                    if (subsystem["model"] is JArray model)
+                    {
+                        foreach (var element in model)
+                        {
+                            if (element["type"]?.ToString() == "process")
+                            {
+                                var processName = element["name"]?.ToString();
+                                var transitions = element["transitions"] as JArray;
+
+                                if (transitions != null)
+                                {
+                                    foreach (var transition in transitions)
+                                    {
+                                        var eventData = transition["eventData"] as JArray;
+
+                                        if (eventData != null)
+                                        {
+                                            foreach (var data in eventData)
+                                            {
+                                                var dataFlowName = data["name"]?.ToString();
+                                                var requiredAttributes = data["requiredAttributes"] as JArray;
+
+                                                if (requiredAttributes != null)
+                                                {
+                                                    var requiredAttributesList = requiredAttributes.Select(attr => attr.ToString()).ToList();
+
+                                                    // Ensure the data flow is labelled correctly
+                                                    if (dataFlowName == null || !requiredAttributesList.All(attr => dataFlowName.Contains(attr)))
+                                                    {
+                                                        msgBox.AppendText($"Syntax error 53: The event data flow into process '{processName}' is not labelled correctly with the required attributes.\r\n");
+                                                        return false;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // If all checks pass, append success message
+                msgBox.AppendText("Success 53: All event data flows into processes are correctly labelled with the required attributes.\r\n");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                msgBox.AppendText("Syntax error 53: " + ex.Message + "\r\n");
+                return false;
+            }
+        }
+
+        public static bool Point54(Parsing form1, JArray jsonArray)
+        {
+            TextBox msgBox = form1.GetMessageBox();
+            try
+            {
+                foreach (var subsystem in jsonArray)
+                {
+                    if (subsystem["model"] is JArray model)
+                    {
+                        foreach (var element in model)
+                        {
+                            if (element["type"]?.ToString() == "process")
+                            {
+                                var processName = element["name"]?.ToString();
+                                var eventsGenerated = element["eventsGenerated"] as JArray;
+
+                                if (eventsGenerated != null)
+                                {
+                                    foreach (var eventGenerated in eventsGenerated)
+                                    {
+                                        var eventName = eventGenerated["name"]?.ToString();
+                                        var eventMeaning = eventGenerated["meaning"]?.ToString();
+                                        var eventData = eventGenerated["eventData"]?.ToString();
+
+                                        if (string.IsNullOrEmpty(eventName) || string.IsNullOrEmpty(eventMeaning) || string.IsNullOrEmpty(eventData))
+                                        {
+                                            msgBox.AppendText($"Syntax error 54: The event generated by process '{processName}' is not correctly labelled with the event's label, meaning, and event data.\r\n");
+                                            return false;
+                                        }
+                                        else
+                                        {
+                                            // This represents the data flow directed away from the process
+                                            msgBox.AppendText($"Event '{eventName}' generated by process '{processName}' with meaning '{eventMeaning}' and event data '{eventData}' is correctly labelled and directed away from the process.\r\n");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // If all checks pass, append success message
+                msgBox.AppendText("Success 54: All events generated by processes are correctly labelled and represented as data flows directed away from the process.\r\n");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                msgBox.AppendText("Syntax error 54: " + ex.Message + "\r\n");
+                return false;
+            }
+        }
 
     }
 }
