@@ -1261,8 +1261,8 @@ namespace Parsing
 
                     }
                 }
-                    msgBox.AppendText($"Success 70:\r\n");
-                    return true;
+                msgBox.AppendText("Success 70: All access actions have correct process IDs.\r\n");
+                return true;
                 
             }
             catch (Exception ex)
@@ -1316,7 +1316,7 @@ namespace Parsing
 
                     }
                 }
-                msgBox.AppendText($"Success 71:\r\n");
+                msgBox.AppendText("Success 71: All domain subsystems appear in the Subsystem Communication Model.\r\n");
                 return true;
             }
             catch (Exception ex)
@@ -1402,7 +1402,7 @@ namespace Parsing
                         }
                     }
                 }
-                msgBox.AppendText("Success 72:  \r\n");
+                msgBox.AppendText("Success 72: All events are correctly placed in the Subsystem Communication Model.\r\n");
                 return true;
             }
             catch (Exception ex)
