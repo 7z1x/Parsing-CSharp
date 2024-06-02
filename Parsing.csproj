@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CheckPointParsing1115.cs" />
+    <Compile Include="CheckPointParsing2233.cs" />
     <Compile Include="CheckPointParsing5572.cs" />
     <Compile Include="CheckPointParsing610.cs" />
     <Compile Include="Parsing.cs">

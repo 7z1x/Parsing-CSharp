@@ -111,11 +111,19 @@ namespace Parsing
 
             btnCheck_Click1(sender, e);
 
+            CheckPointParsing2233.Point22(this, jsonArray);
+
             ParsingPoint.Point25(this, jsonArray);
             ParsingPoint.Point27(this, jsonArray);
             ParsingPoint.Point28(this, jsonArray);
             ParsingPoint.Point29(this, jsonArray);
             ParsingPoint.Point30(this, jsonArray);
+
+
+            CheckPointParsing2233.Point31(this, jsonArray);
+            CheckPointParsing2233.Point32(this, jsonArray);
+            CheckPointParsing2233.Point33(this, jsonArray);
+
             ParsingPoint.Point34(this, jsonArray);
             ParsingPoint.Point35(this, jsonArray);
 
@@ -160,7 +168,6 @@ namespace Parsing
             CheckParsing5572.Point70(this, jsonArray);
             CheckParsing5572.Point71(this, jsonArray);
             CheckParsing5572.Point72(this, jsonArray);
-
 
             if (string.IsNullOrWhiteSpace(msgBox.Text))
             {
