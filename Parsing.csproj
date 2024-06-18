@@ -88,6 +88,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <None Include="testcase15.json" />
+    <None Include="testcase323571.json" />
     <None Include="testcase610.json" />
     <None Include="testcaseAll.json" />
   </ItemGroup>

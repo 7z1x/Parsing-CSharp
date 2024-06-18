@@ -378,55 +378,95 @@ namespace Parsing
             TextBox msgBox = form1.GetMessageBox();
             try
             {
-                HashSet<string> change = new HashSet<string>();
-                Func<JToken, bool> processItem = null;
-                processItem = (item) =>
-                {
-                    List<string> atributesList = new List<string>();
-                    var itemType = item["type"]?.ToString();
-                    if (itemType == "class")
-                    {
-                        var className = item["class_name"]?.ToString();
-                        var classId = item["class_id"]?.ToString();
-                        var classKl = item["KL"]?.ToString();
-                        var atributes = item["atributes"] as JArray;
-                        if (atributes != null)
-                        {
-                            atributesList.Add(atributes.ToString());
-                            return true;
-                        }
-                        else
-                        {
-                            msgBox.AppendText($"Syntax error 35: atributes for {className} class is null.\r\n");
-                            return false;
-                        }
-                    }
-                    else if (itemType == "class_change")
-                    {
-                        var atributes = item["atributes"] as JArray;
-                    }
-                    else
-                    {
-                        msgBox.AppendText($"Syntax error 35: action for changing class description is not implemented yet.\r\n");
-                        return false;
-                    }
-                    return true;
-                };
+                // Loop through subsystems and model elements
                 foreach (var subsystem in jsonArray)
                 {
-                    foreach (var item in subsystem["model"])
+                    if (subsystem["model"] is JArray model)
                     {
-                        if (!processItem(item))
+                        foreach (var element in model)
                         {
-                            return false;
+                            var elementType = element["type"]?.ToString();
+
+                            // Check for classes and their attributes
+                            if (elementType == "class" && element["attributes"] is JArray attributes)
+                            {
+                                var className = element["class_name"]?.ToString();
+                                var classInstances = new Dictionary<string, Dictionary<string, string>>();
+
+                                // Collect initial data for each instance of the class
+                                if (element["instances"] is JArray instances)
+                                {
+                                    foreach (var instance in instances)
+                                    {
+                                        var instanceId = instance["id"]?.ToString();
+                                        if (instanceId != null)
+                                        {
+                                            foreach (var attribute in attributes)
+                                            {
+                                                var attributeName = attribute["attribute_name"]?.ToString();
+                                                if (attributeName != null)
+                                                {
+                                                    var attributeValue = instance[attributeName]?.ToString();
+                                                    if (attributeValue != null)
+                                                    {
+                                                        if (!classInstances.ContainsKey(instanceId))
+                                                        {
+                                                            classInstances[instanceId] = new Dictionary<string, string>();
+                                                        }
+                                                        classInstances[instanceId][attributeName] = attributeValue;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Check actions that modify attributes
+                                if (element["actions"] is JArray actions)
+                                {
+                                    foreach (var action in actions)
+                                    {
+                                        var actionType = action["type"]?.ToString();
+                                        if (actionType == "modify" && action["target"]?.ToString() == "descriptive_attribute")
+                                        {
+                                            var targetAttribute = action["attribute_name"]?.ToString();
+                                            var newValue = action["new_value"]?.ToString();
+                                            var instanceId = action["instance_id"]?.ToString();
+
+                                            if (targetAttribute != null && instanceId != null && newValue != null)
+                                            {
+                                                if (classInstances.ContainsKey(instanceId))
+                                                {
+                                                    classInstances[instanceId][targetAttribute] = newValue;
+
+                                                    // Check for consistency (example: no empty values)
+                                                    if (classInstances[instanceId] != null)
+                                                    {
+                                                        foreach (var attributeValue in classInstances[instanceId].Values)
+                                                        {
+                                                            if (string.IsNullOrEmpty(attributeValue))
+                                                            {
+                                                                msgBox.AppendText($"Syntax error 35: Inconsistent data found for instance {instanceId} of class {className} after modifying attribute {targetAttribute}.\r\n");
+                                                                return false;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
+
+                msgBox.AppendText("Success 35: All data modifications ensure self-consistency for instances.\r\n");
                 return true;
             }
             catch (Exception ex)
             {
-                msgBox.AppendText($"Syntax error 35: " + ex.Message + ".\r\n");
+                msgBox.AppendText("Syntax error 35: " + ex.Message + "\r\n");
                 return false;
             }
         }

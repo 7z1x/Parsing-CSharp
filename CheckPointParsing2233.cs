@@ -232,10 +232,12 @@ namespace Parsing
                 }
 
                 // Check if events involved are present in Object Communication Model (OCM)
+                bool ocmFound = false;
                 foreach (var subsystem in jsonArray)
                 {
                     if (subsystem["OCM"] is JArray ocm)
                     {
+                        ocmFound = true;
                         foreach (var element in ocm)
                         {
                             var elementEvents = element["events"] as JArray;
@@ -254,12 +256,17 @@ namespace Parsing
                     }
                 }
 
+                if (!ocmFound)
+                {
+                    msgBox.AppendText("Syntax error 32: Object Communication Model (OCM) not found.\r\n");
+                    return false;
+                }
+
                 if (eventsInvolved.Count > 0)
                 {
                     msgBox.AppendText("Syntax error 32: The following events are missing from the Object Communication Model: " + string.Join(", ", eventsInvolved) + "\r\n");
                     return false;
                 }
-
                 msgBox.AppendText("Success 32: All involved events are correctly listed in the Object Communication Model.\r\n");
                 return true;
             }
