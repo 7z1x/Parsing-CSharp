@@ -34,62 +34,41 @@
           "attribute_type": "descriptive_attribute",
           "attribute_name": "ipk",
           "data_type": "real"
+        },
+        {
+          "attribute_type": "referential_attribute",
+          "attribute_name": "jurusan_id",
+          "data_type": "id"
         }
       ],
       "states": [
         {
           "state_id": "1",
           "state_name": "active",
-          "state_value": "active",
+          "state_value": "mhs",
           "state_type": "string",
-          "state_event": [ "setActive", "onActive" ],
-          "KL": "mhs"
+          "state_event": [ "setActive", "onActive" ]
         },
         {
           "state_id": "2",
           "state_name": "cuti",
           "state_value": "cuti",
           "state_type": "string",
-          "state_event": [ "setCuti", "onCuti" ],
-          "KL": "mhs"
+          "state_event": [ "setCuti", "onCuti" ]
         },
         {
           "state_id": "3",
           "state_name": "alumni",
           "state_value": "alumni",
           "state_type": "string",
-          "state_event": [ "setAlumni" ],
-          "KL": "mhs"
+          "state_event": [ "setAlumni" ]
         },
         {
           "state_id": "4",
           "state_name": "dropout",
           "state_value": "dropout",
           "state_type": "string",
-          "state_event": [ "setDropout" ],
-          "KL": "mhs"
-        }
-      ],
-      "transitions": [
-        {
-          "event": "setActive",
-          "from": [ "cuti", "alumni", "dropout" ],
-          "to": "active"
-        },
-        {
-          "event": "setCuti",
-          "from": [ "active" ],
-          "to": "cuti"
-        },
-        {
-          "event": "setAlumni",
-          "from": [ "active" ],
-          "to": "alumni"
-        },
-        {
-          "event": "setDropout",
-          "from": [ "active", "cuti" ],
-          "to": "dropout"
+          "state_event": [ "setDropout" ]
         }
       ]
     },
@@ -114,24 +93,27 @@
           "attribute_type": "descriptive_attribute",
           "attribute_name": "nama",
           "data_type": "string"
+        },
+        {
+          "attribute_type": "referential_attribute",
+          "attribute_name": "jurusan_id",
+          "data_type": "id"
         }
       ],
       "states": [
         {
           "state_id": "5",
           "state_name": "active",
-          "state_value": "active",
+          "state_value": "dsn",
           "state_type": "string",
-          "state_event": [ "setActive", "onActive" ],
-          "KL": "dsn"
+          "state_event": [ "setActive", "onActive" ]
         },
         {
           "state_id": "6",
           "state_name": "cuti",
           "state_value": "cuti",
           "state_type": "string",
-          "state_event": [ "setCuti", "onCuti" ],
-          "KL": "dsn"
+          "state_event": [ "setCuti", "onCuti" ]
         }
       ]
     },
@@ -165,19 +147,10 @@
       "states": [
         {
           "state_id": "7",
-          "state_name": "available",
-          "state_value": "available",
+          "state_name": "scheduled",
+          "state_value": "mtk",
           "state_type": "string",
-          "state_event": [ "setAvailable", "onAvailable" ],
-          "KL": "mtk"
-        },
-        {
-          "state_id": "8",
-          "state_name": "not_available",
-          "state_value": "not_available",
-          "state_type": "string",
-          "state_event": [ "setNotAvailable", "onNotAvailable" ],
-          "KL": "mtk"
+          "state_event": [ "setScheduled", "onScheduled" ]
         }
       ]
     },
@@ -297,17 +270,89 @@
           }
         ]
       }
+    },
+    {
+      "type": "class",
+      "class_id": "7",
+      "class_name": "uang_kuliah_tunggal",
+      "KL": "ukt",
+      "attributes": [
+        {
+          "attribute_type": "naming_attribute",
+          "attribute_name": "ukt_id",
+          "data_type": "id"
+        },
+        {
+          "attribute_type": "referential_attribute",
+          "attribute_name": "prodi_id",
+          "data_type": "id"
+        },
+        {
+          "attribute_type": "descriptive_attribute",
+          "attribute_name": "golongan",
+          "data_type": "string"
+        },
+        {
+          "attribute_type": "descriptive_attribute",
+          "attribute_name": "nominal",
+          "data_type": "integer"
+        }
+      ],
+      "states": [
+        {
+          "state_id": "8",
+          "state_name": "active",
+          "state_value": "ukt",
+          "state_type": "string",
+          "state_event": [ "setNominal" ]
+        }
+      ]
+    },
+    {
+      "type": "association",
+      "name": "R4",
+      "class": [
+        {
+          "class_id": "7",
+          "class_name": "uang_kuliah_tunggal",
+          "class_multiplicity": "0..*"
+        },
+        {
+          "class_id": "1",
+          "class_name": "mahasiswa",
+          "class_multiplicity": "1..*"
+        }
+      ],
+      "model": {
+        "type": "association_class",
+        "class_id": "8",
+        "class_name": "mahasiswa_ukt",
+        "KL": "mhs_ukt",
+        "attributes": [
+          {
+            "attribute_type": "naming_attribute",
+            "attribute_name": "mhs_ukt_id",
+            "data_type": "id"
+          },
+          {
+            "attribute_type": "referential_attribute",
+            "attribute_name": "nim",
+            "data_type": "id"
+          },
+          {
+            "attribute_type": "referential_attribute",
+            "attribute_name": "ukt_id",
+            "data_type": "id"
+          }
+        ]
+      }
     }
   ],
-  "timer": [
+  "communication_model": [
     {
-      "id": "T1",
-      "name": "TIMER_1",
-      "config": {
-        "interval": "60",
-        "class": "mahasiswa",
-        "state": "active"
-      }
+      "subsystem_id": "s1",
+      "subsystem_name": "daring",
+      "communication_class": "REST"
     }
   ]
 }

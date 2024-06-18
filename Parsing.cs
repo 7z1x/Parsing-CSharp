@@ -111,6 +111,8 @@ namespace Parsing
 
             btnCheck_Click1(sender, e);
 
+            CheckParsing5572.Point21(this, jsonArray);
+
             CheckPointParsing2233.Point22(this, jsonArray);
 
             ParsingPoint.Point25(this, jsonArray);
@@ -168,6 +170,7 @@ namespace Parsing
             CheckParsing5572.Point70(this, jsonArray);
             CheckParsing5572.Point71(this, jsonArray);
             CheckParsing5572.Point72(this, jsonArray);
+
 
             if (string.IsNullOrWhiteSpace(msgBox.Text))
             {
@@ -274,7 +277,7 @@ namespace Parsing
                     }
                 }
 
-                ValidateTimerModel(jsonObj, usedKeyLetters);
+                //ValidateTimerModel(jsonObj, usedKeyLetters);
             }
             catch (Exception ex)
             {
@@ -374,28 +377,28 @@ namespace Parsing
             }
         }
 
-        private void ValidateTimerModel(JObject jsonObj, HashSet<string> usedKeyLetters)
-        {
-            string timerKeyLetter = jsonObj["subsystems"]?[0]?["model"]?[0]?["KL"]?.ToString();
-            string timerStateModelName = $"{timerKeyLetter}_ASSIGNER";
+        //private void ValidateTimerModel(JObject jsonObj, HashSet<string> usedKeyLetters)
+        //{
+        //    string timerKeyLetter = jsonObj["subsystems"]?[0]?["model"]?[0]?["KL"]?.ToString();
+        //    string timerStateModelName = $"{timerKeyLetter}_ASSIGNER";
 
-            JToken timerModelToken = jsonObj["subsystems"]?[0]?["model"]?[0];
-            JToken timerStateModelToken = jsonObj["subsystems"]?[0]?["model"]?[0]?[timerStateModelName];
+        //    JToken timerModelToken = jsonObj["subsystems"]?[0]?["model"]?[0];
+        //    JToken timerStateModelToken = jsonObj["subsystems"]?[0]?["model"]?[0]?[timerStateModelName];
 
-            // Check if Timer state model exists
-            if (timerStateModelToken == null || timerStateModelToken.Type != JTokenType.Object)
-            {
-                HandleError($"Syntax error 21: Timer state model not found for TIMER.");
-                return;
-            }
+        //    // Check if Timer state model exists
+        //    if (timerStateModelToken == null || timerStateModelToken.Type != JTokenType.Object)
+        //    {
+        //        HandleError($"Syntax error 21: Timer state model not found for TIMER.");
+        //        return;
+        //    }
 
-            // Check KeyLetter of Timer state model
-            JToken keyLetterToken = timerStateModelToken?["KeyLetter"];
-            if (keyLetterToken == null || keyLetterToken.ToString() != timerKeyLetter)
-            {
-                HandleError($"Syntax error 21: KeyLetter for TIMER does not match the rules.");
-            }
-        }
+        //    // Check KeyLetter of Timer state model
+        //    JToken keyLetterToken = timerStateModelToken?["KeyLetter"];
+        //    if (keyLetterToken == null || keyLetterToken.ToString() != timerKeyLetter)
+        //    {
+        //        HandleError($"Syntax error 21: KeyLetter for TIMER does not match the rules.");
+        //    }
+        //}
 
         private void ValidateEventDirectedToStateModelHelper(JToken modelsToken, Dictionary<string, string> stateModels, string modelName)
         {

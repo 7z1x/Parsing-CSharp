@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -1263,7 +1264,7 @@ namespace Parsing
                 }
                 msgBox.AppendText("Success 70: All access actions have correct process IDs.\r\n");
                 return true;
-                
+
             }
             catch (Exception ex)
             {
@@ -1290,14 +1291,16 @@ namespace Parsing
                     }
                 }
 
-                // Check if each subsystem appears in the Subsystem Communication Model
-                foreach (var subsystem in jsonArray)
+                // Find communication model and check subsystems
+                var communicationModel = jsonArray.FirstOrDefault(x => x["type"]?.ToString() == "communication_model"); // Tanda 1: Menambahkan pencarian untuk communication_model
+                if (communicationModel != null)
                 {
-                    if (subsystem["communication_model"] is JArray communicationModel)
+                    var subsystemsArray = communicationModel["subsystems"] as JArray; // Tanda 2: Mengambil array subsystems dari communication_model
+                    if (subsystemsArray != null)
                     {
-                        foreach (var item in communicationModel)
+                        foreach (var subsystem in subsystemsArray)
                         {
-                            var communicationModelSubName = item["sub_name"]?.ToString();
+                            var communicationModelSubName = subsystem["sub_name"]?.ToString();
                             if (!string.IsNullOrWhiteSpace(communicationModelSubName))
                             {
                                 communicationModelSubsystems.Add(communicationModelSubName);
@@ -1313,9 +1316,9 @@ namespace Parsing
                     {
                         msgBox.AppendText($"Syntax error 71: Subsystem '{subName}' does not appear in the Subsystem Communication Model.\r\n");
                         return false;
-
                     }
                 }
+
                 msgBox.AppendText("Success 71: All domain subsystems appear in the Subsystem Communication Model.\r\n");
                 return true;
             }
@@ -1325,6 +1328,7 @@ namespace Parsing
                 return false;
             }
         }
+
 
         public static bool Point72(Parsing form1, JArray jsonArray)
         {
@@ -1408,6 +1412,70 @@ namespace Parsing
             catch (Exception ex)
             {
                 msgBox.AppendText("Syntax error 72: " + ex.Message + "\r\n");
+                return false;
+            }
+
+        }
+        public static bool Point21(Parsing form1, JArray jsonArray)
+        {
+            TextBox msgBox = form1.GetMessageBox();
+            try
+            {
+                HashSet<string> reservedNames = new HashSet<string> { "TIMER" };
+                HashSet<string> reservedKeyLetters = new HashSet<string> { "TIM" };
+                bool timerObjectFound = false;
+
+                foreach (var subsystem in jsonArray)
+                {
+                    foreach (var item in subsystem["model"])
+                    {
+                        var itemType = item["type"]?.ToString();
+                        var className = item["class_name"]?.ToString();
+                        var keyLetter = item["KL"]?.ToString();
+
+                        if (itemType == "class" && className == "TIMER" && keyLetter == "TIM")
+                        {
+                            timerObjectFound = true;
+                            var attributes = item["attributes"] as JArray;
+                            var requiredAttributes = new HashSet<string> { "timer_id", "instance_id", "event_label", "time_remaining", "timer_status" };
+
+                            foreach (var attribute in attributes)
+                            {
+                                var attributeName = attribute["attribute_name"]?.ToString();
+                                requiredAttributes.Remove(attributeName);
+                            }
+
+                            if (requiredAttributes.Count > 0)
+                            {
+                                msgBox.AppendText("Syntax error 21: TIMER object is missing required attributes: " + string.Join(", ", requiredAttributes) + ".\r\n");
+                            }
+                        }
+                        else
+                        {
+                            if (reservedNames.Contains(className))
+                            {
+                                msgBox.AppendText($"Syntax error 21: Reserved name {className} used for another object.\r\n");
+                            }
+
+                            if (reservedKeyLetters.Contains(keyLetter))
+                            {
+                                msgBox.AppendText($"Syntax error 21: Reserved KeyLetter {keyLetter} used for another object.\r\n");
+                            }
+                        }
+                    }
+                }
+
+                if (!timerObjectFound)
+                {
+                    msgBox.AppendText("Syntax error 21: TIMER object with KeyLetter TIM not found in the subsystem.\r\n");
+                }
+
+                msgBox.AppendText("Success 21: TIMER object with KeyLetter TIM found in the subsystem.\r\n");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                msgBox.AppendText("Syntax error 21: " + ex.Message + "\r\n");
                 return false;
             }
         }

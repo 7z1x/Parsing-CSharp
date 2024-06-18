@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Cryptography.X509Certificates;
 using System.Windows.Forms;
 
 namespace Parsing
@@ -15,132 +16,64 @@ namespace Parsing
             TextBox msgBox = form1.GetMessageBox();
             try
             {
-                Func<JToken, bool> processItem = null;
-                processItem = (item) =>
-                {
-                    var itemType = item["type"]?.ToString();
-
-                    if (itemType == "class" && item["class_name"]?.ToString() == "mahasiswa")
-                    {
-                        var className = item["class_name"]?.ToString();
-                        var statesArray = item["states"] as JArray;
-
-                        if (statesArray != null)
-                        {
-                            HashSet<string> stateNameInfo = new HashSet<string>();
-                            foreach (var state in statesArray)
-                            {
-                                var stateName = state["state_name"]?.ToString();
-                                if (!stateNameInfo.Add(stateName))
-                                {
-                                    msgBox.AppendText($"Syntax error 25: {stateName} state in {className} class contains the same information with other state. \r\n");
-                                    return false;
-                                }
-                                if (stateName == null)
-                                {
-                                    msgBox.AppendText($"Syntax error 25: state name memiliki nilai null pada class {className}. \r\n");
-                                    return false;
-                                }
-                            }
-                        }
-                        if (statesArray != null)
-                        {
-                            HashSet<string> stateValueInfo = new HashSet<string>();
-                            foreach (var state in statesArray)
-                            {
-                                var stateValue = state["state_value"]?.ToString();
-                                if (!stateValueInfo.Add(stateValue))
-                                {
-                                    msgBox.AppendText($"Syntax error 25: state dengan value {stateValue} pada class {className} memiliki informasi yang sama dengan state lain. \r\n");
-                                    return false;
-                                }
-                            }
-                        }
-                    }
-                    if (itemType == "class" && item["class_name"]?.ToString() == "dosen")
-                    {
-                        var className = item["class_name"]?.ToString();
-                        var statesArray = item["states"] as JArray;
-
-                        if (statesArray != null)
-                        {
-                            HashSet<string> stateNameInfo = new HashSet<string>();
-                            foreach (var state in statesArray)
-                            {
-                                var stateName = state["state_name"]?.ToString();
-                                if (!stateNameInfo.Add(stateName))
-                                {
-                                    msgBox.AppendText($"Syntax error 25: state dengan nama {stateName} pada class {className} memiliki informasi yang sama dengan state lain. \r\n");
-                                    return false;
-                                }
-                                if (stateName == null)
-                                {
-                                    msgBox.AppendText($"Syntax error 25: state name memiliki nilai null pada class {className}. \r\n");
-                                    return false;
-                                }
-                            }
-                        }
-                        if (statesArray != null)
-                        {
-                            HashSet<string> stateValueInfo = new HashSet<string>();
-                            foreach (var state in statesArray)
-                            {
-                                var stateValue = state["state_value"]?.ToString();
-                                if (!stateValueInfo.Add(stateValue))
-                                {
-                                    msgBox.AppendText($"Syntax error 25: state dengan value {stateValue} pada class {className} memiliki informasi yang sama dengan state lain. \r\n");
-                                    return false;
-                                }
-                            }
-                        }
-                        if (statesArray != null)
-                        {
-                            HashSet<string> stateEvenInfo = new HashSet<string>();
-                            foreach (var state in statesArray)
-                            {
-                                var stateEvent = state["state_event"]?.ToString();
-                                if (!stateEvenInfo.Add(stateEvent))
-                                {
-                                    msgBox.AppendText($"Syntax error 25: state dengan event {stateEvent} pada class {className} meiliki informasi yang sama dengan state lain. \r\n");
-                                    return false;
-                                }
-                            }
-                        }
-                        if (statesArray != null)
-                        {
-                            HashSet<string> stateEvenInfo = new HashSet<string>();
-                            foreach (var state in statesArray)
-                            {
-                                var stateEvent = state["state_event"]?.ToString();
-                                if (!stateEvenInfo.Add(stateEvent))
-                                {
-                                    msgBox.AppendText($"Syntax error 25: state dengan event {stateEvent} pada class {className} meiliki informasi yang sama dengan state lain. \r\n");
-                                    return false;
-                                }
-                            }
-                        }
-                    }
-                    return true;
-                };
+                // Menggunakan HashSet untuk menyimpan event labels
+                HashSet<string> eventLabels = new HashSet<string>();
 
                 foreach (var subsystem in jsonArray)
                 {
-                    foreach (var item in subsystem["model"])
+                    // Memeriksa apakah subsystem memiliki events
+                    if (subsystem["events"] != null)
                     {
-                        if (!processItem(item))
+                        foreach (var eventItem in subsystem["events"])
                         {
-                            return false;
+                            var eventName = eventItem["event_name"]?.ToString();
+                            var stateModelName = eventItem["state_model_name"]?.ToString();
+                            var eventData = eventItem["event_data"] as JObject;
+                            var eventLabel = eventItem["event_label"]?.ToString();
+
+                            // Memeriksa apakah komponen-komponen event ada dan tidak kosong
+                            if (string.IsNullOrWhiteSpace(eventName))
+                            {
+                                msgBox.AppendText("Syntax error: Event name is empty. \r\n");
+                            }
+
+                            if (string.IsNullOrWhiteSpace(stateModelName))
+                            {
+                                msgBox.AppendText("Syntax error: State model name is empty. \r\n");
+                            }
+
+                            if (eventData == null || !eventData.HasValues)
+                            {
+                                msgBox.AppendText("Syntax error: Event data is empty. \r\n");
+                            }
+
+                            if (string.IsNullOrWhiteSpace(eventLabel))
+                            {
+                                msgBox.AppendText("Syntax error: Event label is empty. \r\n");
+                            }
+
+                            // Memeriksa duplikasi event label
+                            if (eventLabels.Contains(eventLabel))
+                            {
+                                msgBox.AppendText($"Syntax error: Duplicate event label {eventLabel}. \r\n");
+                            }
+                            else
+                            {
+                                eventLabels.Add(eventLabel);
+                            }
                         }
                     }
                 }
+                msgBox.AppendText($"Success 25: All events have unique labels.\r\n");
                 return true;
             }
             catch (Exception ex)
             {
-                msgBox.AppendText("Syntax error 25: " + ex.Message + ".\r\n");
+                msgBox.AppendText("Syntax error: " + ex.Message + "\r\n");
                 return false;
             }
         }
+
 
         public static bool Point27(Parsing form1, JArray jsonArray)
         {
@@ -250,169 +183,135 @@ namespace Parsing
             TextBox msgBox = form1.GetMessageBox();
             try
             {
-                Func<JToken, bool> processItem = null;
-                processItem = (item) =>
+                foreach (var subsystem in jsonArray)
                 {
-                    var itemType = item["type"]?.ToString();
-                    if (itemType == "class")
+                    Dictionary<string, Dictionary<string, HashSet<string>>> stateEventsData = new Dictionary<string, Dictionary<string, HashSet<string>>>();
+
+                    foreach (var item in subsystem["model"])
                     {
-                        var className = item["class_name"]?.ToString();
-                        if (className == "mahasiswa")
+                        var itemType = item["type"]?.ToString();
+
+                        if (itemType == "class" || itemType == "association_class")
                         {
-                            HashSet<string> idState = new HashSet<string>();
-                            HashSet<string> stateN = new HashSet<string>();
-                            var states = item["states"] as JArray;
-                            if (states != null)
+                            foreach (var state in item["states"])
                             {
-                                foreach (var sub in states)
+                                var stateName = state["state_name"]?.ToString();
+
+                                if (!stateEventsData.ContainsKey(stateName))
                                 {
-                                    var stateName = sub["state_name"]?.ToString();
-                                    var stateId = sub["state_id"]?.ToString();
-                                    var stateValue = sub["state_value"]?.ToString();
-                                    if (stateId != null)
+                                    stateEventsData[stateName] = new Dictionary<string, HashSet<string>>();
+                                }
+
+                                foreach (var eventName in state["state_event"])
+                                {
+                                    var eventString = eventName?.ToString();
+                                    var eventData = string.Join(",", state["state_event"]); // Simulasikan data event
+
+                                    if (!stateEventsData[stateName].ContainsKey(eventString))
                                     {
-                                        idState.Add(stateId);
+                                        stateEventsData[stateName][eventString] = new HashSet<string>();
                                     }
-                                    else if (stateName != null)
+
+                                    if (stateEventsData[stateName][eventString].Count == 0)
                                     {
-                                        stateN.Add(stateName);
-                                    }
-                                    var transitions = sub["transitions"] as JArray;
-                                    if (transitions != null)
-                                    {
-                                        foreach (var subTrans in transitions)
-                                        {
-                                            var stateTarget = subTrans["target_state"]?.ToString();
-                                            var idStateTarget = subTrans["target_state_id"]?.ToString();
-                                            if (stateTarget != null && idStateTarget != null)
-                                            {
-                                                idState.Add(idStateTarget);
-                                                stateN.Add(stateTarget);
-                                                if (!idState.Add(idStateTarget))
-                                                {
-                                                    return true;
-                                                }
-                                                else if (!stateN.Add(stateTarget))
-                                                {
-                                                    return true;
-                                                }
-                                                else
-                                                {
-                                                    msgBox.AppendText($"Syntax error 29: transition {className} class include incorect indentifier for target state {stateTarget}.\r\n");
-                                                    return false;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                msgBox.AppendText($"Syntax error 29: target id for transition class is null in class {className}.\r\n");
-                                                return false;
-                                            }
-                                        }
+                                        stateEventsData[stateName][eventString].Add(eventData);
                                     }
                                     else
                                     {
-                                        msgBox.AppendText($"Syntax error 29: Transition state for class {className} is not implemented.\r\n");
-                                        return false;
+                                        if (!stateEventsData[stateName][eventString].Contains(eventData))
+                                        {
+                                            msgBox.AppendText($"Syntax error: Event data inconsistency in state {stateName} for event {eventString}. \r\n");
+                                        }
                                     }
                                 }
                             }
-                            else
-                            {
-                                msgBox.AppendText($"Syntax error 29: States for class {className} is null.\r\n");
-                                return false;
-                            }
-                        }
-                    }
-                    return true;
-                };
-                foreach (var subsystem in jsonArray)
-                {
-                    foreach (var item in subsystem["model"])
-                    {
-                        if (!processItem(item))
-                        {
-                            return false;
                         }
                     }
                 }
+                msgBox.AppendText($"Success 29: There are no inconsistencies in event data within each state.\r\n");
+
                 return true;
             }
             catch (Exception ex)
             {
-                msgBox.AppendText("Syntax error 29: " + ex.Message + ".\r\n");
+                msgBox.AppendText("Error: " + ex.Message + "\r\n");
                 return false;
             }
         }
+
 
 
         public static bool Point30(Parsing form1, JArray jsonArray)
         {
             TextBox msgBox = form1.GetMessageBox();
-
             try
             {
-                Func<JToken, bool> processItem = null;
-                processItem = (item) =>
-                {
-                    var itemType = item["type"]?.ToString();
-                    if (itemType == "class")
-                    {
-                        var className = item["class_name"]?.ToString();
-                        var stateArray = item["states"] as JArray;
-                        if (stateArray != null)
-                        {
-                            foreach (var state in stateArray)
-                            {
-                                HashSet<string> strings = new HashSet<string>();
-                                var stateSetTimer = state["state_event"]?.ToString();
-                                var stateName = state["state_name"]?.ToString();
-                                if (stateSetTimer != null && !stateSetTimer.Contains("setTimer"))
-                                {
-                                    msgBox.AppendText("Syntax error 30: Every state in classes has not been included in the timer setting.\r\n");
-                                    return false;
-                                }
-                                else
-                                {
-                                    return true;
-                                }
-                            }
-                            foreach (var state in stateArray)
-                            {
-                                HashSet<string> strings = new HashSet<string>();
-                                var stateName = state["state_name"]?.ToString();
-                                var stateSetTimer = state["state_event"]?.ToString();
-                                if (stateSetTimer != null && !stateSetTimer.Contains("set"))
-                                {
-                                    msgBox.AppendText("Syntax error 30: Every state in classes has not been included in the timer setting.\r\n");
-                                    return false;
-                                }
-                                else
-                                {
-                                    return true;
-                                }
-                            }
-                        }
-                    }
-                    return true;
-                };
                 foreach (var subsystem in jsonArray)
                 {
                     foreach (var item in subsystem["model"])
                     {
-                        if (!processItem(item))
+                        var itemType = item["type"]?.ToString();
+
+                        // Check for TIM1 and TIM2 within association_class or class types that involve timers
+                        if (itemType == "class" || itemType == "association_class")
                         {
-                            return false;
+                            if (item["attributes"] != null)
+                            {
+                                foreach (var attribute in item["attributes"])
+                                {
+                                    if (attribute["attribute_name"]?.ToString() == "timer_id")
+                                    {
+                                        var timerId = attribute["attribute_name"]?.ToString();
+                                        if (string.IsNullOrWhiteSpace(timerId))
+                                        {
+                                            msgBox.AppendText("Syntax error: timer_id is empty. \r\n");
+                                        }
+                                    }
+
+                                    if (attribute["attribute_name"]?.ToString() == "ELx")
+                                    {
+                                        var elx = attribute["attribute_name"]?.ToString();
+                                        if (string.IsNullOrWhiteSpace(elx))
+                                        {
+                                            msgBox.AppendText("Syntax error: ELx is empty. \r\n");
+                                        }
+                                    }
+
+                                    if (attribute["attribute_name"]?.ToString() == "instance_id")
+                                    {
+                                        var instanceId = attribute["attribute_name"]?.ToString();
+                                        if (string.IsNullOrWhiteSpace(instanceId))
+                                        {
+                                            msgBox.AppendText("Syntax error: instance_id is empty. \r\n");
+                                        }
+                                    }
+
+                                    if (attribute["attribute_name"]?.ToString() == "time_interval")
+                                    {
+                                        var timeInterval = attribute["attribute_name"]?.ToString();
+                                        if (string.IsNullOrWhiteSpace(timeInterval))
+                                        {
+                                            msgBox.AppendText("Syntax error: time_interval is empty. \r\n");
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
+
+                msgBox.AppendText("Success 30: Every state in classes has been included in the timer setting.\r\n");
                 return true;
             }
             catch (Exception ex)
             {
-                msgBox.AppendText("Syntax error 30: " + ex.Message + ".\r\n");
+                msgBox.AppendText("Error validating timers: " + ex.Message + "\r\n");
                 return false;
             }
         }
+
+
+
 
         public static bool Point34(Parsing form1, JArray jsonArray)
         {

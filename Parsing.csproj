@@ -76,6 +76,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include=".json" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -88,6 +89,7 @@
     </Compile>
     <None Include="testcase15.json" />
     <None Include="testcase610.json" />
+    <None Include="testcaseAll.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

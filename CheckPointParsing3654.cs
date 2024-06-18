@@ -54,19 +54,19 @@ namespace Parsing
 
                                     if (!isConsistent)
                                     {
-                                        msgBox.AppendText($"Syntax error: Action {actionType} on class {affectedClass} has inconsistent relationships. \r\n");
+                                        msgBox.AppendText($"Syntax error 36: Action {actionType} on class {affectedClass} has inconsistent relationships. \r\n");
                                     }
                                 }
                             }
                         }
                     }
                 }
-                msgBox.AppendText("Sukses 36 \n");
+                msgBox.AppendText("Success 36: All actions have consistent relationships.\r\n");
                 return true;
             }
             catch (Exception ex)
             {
-                msgBox.AppendText("Syntax error: " + ex.Message + "\r\n");
+                msgBox.AppendText("Syntax error 36: " + ex.Message + "\r\n");
                 return false;
             }
         }
@@ -143,7 +143,7 @@ namespace Parsing
                         }
                     }
                 }
-                msgBox.AppendText("Sukses 37 \n");
+                msgBox.AppendText("Success 37: All actions have consistent subtypes and supertypes.\r\n");
                 return true;
             }
             catch (Exception ex)
@@ -209,7 +209,7 @@ namespace Parsing
                     }
                 }
 
-                msgBox.AppendText("Sukses 38 \n");
+                msgBox.AppendText("Success 38: All actions appropriately update the current state attribute.\r\n");
                 return true;
             }
             catch (Exception ex)
@@ -247,8 +247,7 @@ namespace Parsing
                         }
                     }
                 }
-                msgBox.AppendText("Sukses 39 \r\n");
-
+                msgBox.AppendText("Success 39: All actions have matching state and process model names.\r\n");
                 return true;
             }
             catch (Exception ex)
@@ -312,8 +311,7 @@ namespace Parsing
                         }
                     }
                 }
-                msgBox.AppendText("Sukses 40  \r\n");
-
+                msgBox.AppendText("Success 40: Process models contain processes and data flows.\r\n");
                 return true;
             }
             catch (Exception ex)
@@ -379,8 +377,7 @@ namespace Parsing
                         }
                     }
                 }
-                msgBox.AppendText("Sukses 41 \r\n");
-
+                msgBox.AppendText("Success 41: Data stores in process models are correctly labeled.\r\n");
                 return true;
             }
             catch (Exception ex)
@@ -434,8 +431,7 @@ namespace Parsing
                     }
                 }
 
-                msgBox.AppendText("Sukses 42 \r\n");
-
+                msgBox.AppendText("Success 42: Timers in process models represent time left on each timer.\r\n");
                 return true;
             }
             catch (Exception ex)
@@ -488,7 +484,7 @@ namespace Parsing
                         }
                     }
                 }
-                msgBox.AppendText("Sukses 43 \r\n");
+                msgBox.AppendText("Success 43: All 'Current Time' data stores represent data describing the current time.\r\n");
                 return true;
             }
             catch (Exception ex)
@@ -540,13 +536,12 @@ namespace Parsing
                         }
                     }
                 }
-                msgBox.AppendText("Sukses 44 \r\n");
-
+                msgBox.AppendText("Success 44: All data stores correspond to objects in the IM and have attributes.\r\n");
                 return true;
             }
             catch (Exception ex)
             {
-                msgBox.AppendText("Syntax error: " + ex.Message + "\r\n");
+                msgBox.AppendText("Syntax error 44: " + ex.Message + "\r\n");
                 return false;
             }
         }

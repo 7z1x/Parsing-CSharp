@@ -315,49 +315,119 @@ namespace Parsing
             return false;
         }
 
-
-        public static bool Point15(Parsing form1, JArray subsystems)
+        public static bool Point15(Parsing form1, JArray jsonArray)
         {
             TextBox msgBox = form1.GetMessageBox();
             try
-            { 
-                foreach (var subsystem in subsystems)
+            {
+                foreach (var subsystem in jsonArray)
                 {
+                    HashSet<string> classNames = new HashSet<string>();
+                    HashSet<string> classIds = new HashSet<string>();
+
                     foreach (var item in subsystem["model"])
                     {
                         var itemType = item["type"]?.ToString();
 
-                        if (itemType == "class" && item["states"] is JArray states)
+                        if ((itemType == "class" || itemType == "association_class") && item["class_name"] != null)
                         {
                             var className = item["class_name"]?.ToString();
+                            var classId = item["class_id"]?.ToString();
+                            var classKeyLetter = item["KL"]?.ToString();
 
-                            foreach (var state in states)
+                            if (string.IsNullOrWhiteSpace(className) || string.IsNullOrWhiteSpace(classId))
                             {
-                                var stateName = state["state_name"]?.ToString();
-
-                                // Cek apakah ada state_name yang sama dengan class_name
-                                if (stateName != null && stateName.Equals(className, StringComparison.OrdinalIgnoreCase))
-                                {
-
-                                    return true;
-                                }
+                                msgBox.AppendText("Syntax error 15: Class name or class_id is empty in the subsystem. \r\n");
+                                continue;
                             }
 
-                            msgBox.AppendText($"Syntax error 15: Subsystem {subsystem["sub_id"]?.ToString()} has a class {className} without a corresponding state. \r\n");
+                            if (classNames.Contains(className))
+                            {
+                                msgBox.AppendText($"Syntax error15: Duplicate class name {className} within this subsystem. \r\n");
+                            }
 
+                            if (classIds.Contains(classId))
+                            {
+                                msgBox.AppendText($"Syntax error 15: Duplicate class_id {classId} within this subsystem. \r\n");
+                            }
+
+                            classNames.Add(className);
+                            classIds.Add(classId);
+
+                            // Check state models
+                            if (item["states"] != null)
+                            {
+                                foreach (var state in item["states"])
+                                {
+                                    var stateName = state["state_name"]?.ToString();
+                                    var stateKeyLetter = state["KL"]?.ToString();
+
+                                    if (stateName != className || stateKeyLetter != classKeyLetter)
+                                    {
+                                        msgBox.AppendText($"Syntax error 15: State model name or KeyLetter does not match the class name or KeyLetter for {className}. \r\n");
+                                    }
+                                }
+                            }
+                        }
+
+                        if (itemType == "association" && item["model"] is JObject associationModel)
+                        {
+                            var associationItemType = associationModel["type"]?.ToString();
+
+                            if (associationItemType == "association_class" && associationModel["class_name"] != null)
+                            {
+                                var associationClassName = associationModel["class_name"]?.ToString();
+                                var associationClassId = associationModel["class_id"]?.ToString();
+                                var associationClassKeyLetter = associationModel["KL"]?.ToString();
+
+                                if (string.IsNullOrWhiteSpace(associationClassName) || string.IsNullOrWhiteSpace(associationClassId))
+                                {
+                                    msgBox.AppendText("Syntax error 15: Class name or class_id is empty in the subsystem. \r\n");
+                                    continue;
+                                }
+
+                                if (classNames.Contains(associationClassName))
+                                {
+                                    msgBox.AppendText($"Syntax error 15: Duplicate class name {associationClassName} within this subsystem. \r\n");
+                                }
+
+                                if (classIds.Contains(associationClassId))
+                                {
+                                    msgBox.AppendText($"Syntax error 15: Duplicate class_id {associationClassId} within this subsystem. \r\n");
+                                }
+
+                                classNames.Add(associationClassName);
+                                classIds.Add(associationClassId);
+
+                                // Check state models for association classes
+                                if (associationModel["states"] != null)
+                                {
+                                    foreach (var state in associationModel["states"])
+                                    {
+                                        var stateName = state["state_name"]?.ToString();
+                                        var stateKeyLetter = state["KL"]?.ToString();
+
+                                        if (stateName != associationClassName || stateKeyLetter != associationClassKeyLetter)
+                                        {
+                                            msgBox.AppendText($"Syntax error 15: State model name or KeyLetter does not match the class name or KeyLetter for {associationClassName}. \r\n");
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
 
                 return true;
             }
-   
             catch (Exception ex)
             {
-                msgBox.AppendText($"Syntax error 15: {ex.Message} \r\n");
+                msgBox.AppendText("Syntax error 15: " + ex.Message + "\r\n");
                 return false;
             }
         }
+
+
 
         public static bool Point99(Parsing form1, JArray subsystems)
         {

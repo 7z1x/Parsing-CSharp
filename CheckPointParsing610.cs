@@ -422,13 +422,17 @@ namespace Parsing
                     string lastPart = parts.LastOrDefault(); // Ambil bagian terakhir
 
                     // Periksa apakah ada kelas dengan KL yang mengandung referenceName
-                    bool isValid = IsReferenceNameValid(jsonArray, referenceName);
+                    bool isValid = IsReferenceNameValid(jsonArray, referenceName, out string relationshipLabel);
 
                     if (!isValid || (lastPart != "id"))
                     {
                         msgBox.AppendText($"Syntax error 10: Referential attribute '{attributeName}' has incorrect naming.\r\n");
                         return false;
                     }
+
+                    // Tambahkan label hubungan ke nama atribut
+                    string newAttributeName = $"{referenceName}_{relationshipLabel}_id";
+                    msgBox.AppendText($"Referential attribute '{attributeName}' should be renamed to '{newAttributeName}'.\r\n");
                 }
 
                 return true;
@@ -440,12 +444,10 @@ namespace Parsing
             }
         }
 
-        // ...
-
-
-
-        public static bool IsReferenceNameValid(JArray jsonArray, string referenceName)
+        public static bool IsReferenceNameValid(JArray jsonArray, string referenceName, out string relationshipLabel)
         {
+            relationshipLabel = null;
+
             // Iterasi setiap kelas dan association_class dan periksa KL-nya
             foreach (var subsystem in jsonArray)
             {
@@ -454,8 +456,9 @@ namespace Parsing
                     if (item["type"].ToString() == "class")
                     {
                         string klValue = item["KL"]?.ToString();
-                        if (!string.IsNullOrEmpty(klValue) && klValue.Contains(referenceName))
+                        if (!string.IsNullOrEmpty(klValue) && klValue == referenceName)
                         {
+                            relationshipLabel = "class"; // label hubungan untuk kelas
                             return true;
                         }
                     }
@@ -467,20 +470,18 @@ namespace Parsing
                         if (associationItemType == "association_class")
                         {
                             string klValue = associationModel["KL"]?.ToString();
-                            if (!string.IsNullOrEmpty(klValue) && klValue.Contains(referenceName))
+                            if (!string.IsNullOrEmpty(klValue) && klValue == referenceName)
                             {
+                                relationshipLabel = "association_class"; // label hubungan untuk association class
                                 return true;
                             }
                         }
                     }
-
-
                 }
             }
 
             return false;
         }
-
 
     }
 }

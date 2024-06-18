@@ -15,57 +15,96 @@ namespace Parsing
             TextBox msgBox = form1.GetMessageBox();
             try
             {
-                bool eventsGeneratedByStateModels = false;
-                bool eventsGeneratedByExternalEntities = false;
-
                 foreach (var subsystem in jsonArray)
                 {
-                    if (subsystem["model"] is JArray model)
-                    {
-                        foreach (var element in model)
-                        {
-                            var elementType = element["type"]?.ToString();
+                    HashSet<string> classNames = new HashSet<string>();
+                    HashSet<string> classIds = new HashSet<string>();
 
-                            // Check state models for events
-                            if (elementType == "class" && element["states"] is JArray states)
+                    foreach (var item in subsystem["model"])
+                    {
+                        var itemType = item["type"]?.ToString();
+
+                        if ((itemType == "class" || itemType == "association_class") && item["class_name"] != null)
+                        {
+                            var className = item["class_name"]?.ToString();
+                            var classId = item["class_id"]?.ToString();
+
+                            if (string.IsNullOrWhiteSpace(className) || string.IsNullOrWhiteSpace(classId))
                             {
-                                foreach (var state in states)
+                                msgBox.AppendText("Syntax error 22: Class name or class_id is empty in the subsystem. \r\n");
+                            }
+
+                            if (classNames.Contains(className))
+                            {
+                                msgBox.AppendText($"Syntax error 22: Duplicate class name {className} within this subsystem. \r\n");
+                            }
+
+                            if (classIds.Contains(classId))
+                            {
+                                msgBox.AppendText($"Syntax error 22: Duplicate class_id {classId} within this subsystem. \r\n");
+                            }
+
+                            classNames.Add(className);
+                            classIds.Add(classId);
+
+                            // Check state events
+                            if (item["states"] != null)
+                            {
+                                foreach (var state in item["states"])
                                 {
-                                    var stateEvents = state["state_event"] as JArray;
-                                    if (stateEvents != null && stateEvents.Count > 0)
+                                    var stateEvents = state["state_event"]?.ToArray();
+                                    if (stateEvents == null || stateEvents.Length == 0)
                                     {
-                                        eventsGeneratedByStateModels = true;
-                                        break;
+                                        msgBox.AppendText($"Syntax error 22: State {state["state_name"]} does not generate any events.\r\n");
                                     }
                                 }
                             }
+                        }
 
-                            // Check external entities for events
-                            if (elementType == "external_entity")
+                        if (itemType == "association" && item["model"] is JObject associationModel)
+                        {
+                            var associationItemType = associationModel["type"]?.ToString();
+
+                            if (associationItemType == "association_class" && associationModel["class_name"] != null)
                             {
-                                var externalEvents = element["events"] as JArray;
-                                if (externalEvents != null && externalEvents.Count > 0)
+                                var associationClassName = associationModel["class_name"]?.ToString();
+                                var associationClassId = associationModel["class_id"]?.ToString();
+
+                                if (string.IsNullOrWhiteSpace(associationClassName) || string.IsNullOrWhiteSpace(associationClassId))
                                 {
-                                    eventsGeneratedByExternalEntities = true;
+                                    msgBox.AppendText("Syntax error 22: Class name or class_id is empty in the subsystem. \r\n");
+                                }
+
+                                if (classNames.Contains(associationClassName))
+                                {
+                                    msgBox.AppendText($"Syntax error 22: Duplicate class name {associationClassName} within this subsystem. \r\n");
+                                }
+
+                                if (classIds.Contains(associationClassId))
+                                {
+                                    msgBox.AppendText($"Syntax error 22: Duplicate class_id {associationClassId} within this subsystem. \r\n");
+                                }
+
+                                classNames.Add(associationClassName);
+                                classIds.Add(associationClassId);
+
+                                // Check state events for association_class
+                                if (associationModel["states"] != null)
+                                {
+                                    foreach (var state in associationModel["states"])
+                                    {
+                                        var stateEvents = state["state_event"]?.ToArray();
+                                        if (stateEvents == null || stateEvents.Length == 0)
+                                        {
+                                            msgBox.AppendText($"Syntax error 22: State {state["state_name"]} does not generate any events.\r\n");
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
-
-                if (!eventsGeneratedByStateModels)
-                {
-                    msgBox.AppendText("Syntax error 22: No events generated by state models.\r\n");
-                    return false;
-                }
-
-                if (!eventsGeneratedByExternalEntities)
-                {
-                    msgBox.AppendText("Syntax error 22: No events generated by external entities.\r\n");
-                    return false;
-                }
-
-                msgBox.AppendText("Success 22: Events are correctly generated by state models and external entities.\r\n");
+                msgBox.AppendText($"Success 22: All classes and association classes have unique names and IDs.\r\n");
                 return true;
             }
             catch (Exception ex)
@@ -95,7 +134,7 @@ namespace Parsing
                             if (elementType == "class" && element["states"] is JArray states)
                             {
                                 var className = element["class_name"]?.ToString();
-                                if (states.Any(state => (state["state_event"] as JArray)?.Count > 0))
+                                if (className != "TIMER" && states.Any(state => (state["state_event"] as JArray)?.Count > 0))
                                 {
                                     entitiesWithEvents.Add(className);
                                 }
@@ -105,7 +144,7 @@ namespace Parsing
                             if (elementType == "external_entity" && element["events"] is JArray events)
                             {
                                 var entityName = element["entity_name"]?.ToString();
-                                if (events.Count > 0)
+                                if (entityName != "TIMER" && events.Count > 0)
                                 {
                                     entitiesWithEvents.Add(entityName);
                                 }
@@ -145,6 +184,7 @@ namespace Parsing
                 return false;
             }
         }
+
 
         public static bool Point32(Parsing form1, JArray jsonArray)
         {
