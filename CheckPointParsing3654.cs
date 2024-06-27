@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -559,18 +560,21 @@ namespace Parsing
                     {
                         foreach (var element in model)
                         {
-                            if (element["type"]?.ToString() == "dataStore")
+                            if (element["typedata"]?.ToString() == "dataStore")
                             {
+
                                 var dataStoreId = element["dataStoreId"]?.ToString();
 
                                 if (dataStoreIds.Contains(dataStoreId))
                                 {
+
                                     // If the data store is already encountered, it's appearing multiple times
                                     msgBox.AppendText($"Success 45: Data store '{dataStoreId}' appears in multiple places within the process model(s).\r\n");
                                     return true;
                                 }
                                 else
                                 {
+
                                     // Add the data store ID to the HashSet
                                     dataStoreIds.Add(dataStoreId);
                                 }
