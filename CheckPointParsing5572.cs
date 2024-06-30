@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -243,6 +244,8 @@ namespace Parsing
         public static bool Point58(Parsing form1, JArray jsonArray)
         {
             TextBox msgBox = form1.GetMessageBox();
+            int num = 1;
+
             try
             {
                 var dataStores = new HashSet<string>();
@@ -253,14 +256,15 @@ namespace Parsing
                 {
                     foreach (var item in subsystem["model"])
                     {
-                        var itemType = item["type"]?.ToString();
+                        var itemType = item["typedata"]?.ToString();
 
-                        if (itemType == "data_store")
+                        if (itemType == "dataStore")
                         {
                             var storeName = item["store_name"]?.ToString();
                             if (!string.IsNullOrWhiteSpace(storeName))
                             {
                                 dataStores.Add(storeName);
+                                Debug.WriteLine($"DataStore : {storeName}");
                             }
                         }
                         else if (itemType == "control_store")
@@ -293,9 +297,10 @@ namespace Parsing
                                     var stateName = state["state_name"]?.ToString();
                                     var stateEvents = state["state_event"] as JArray;
                                     var eventData = state["event_data"] as JArray;
-
+                                    
                                     if (stateEvents != null)
                                     {
+
                                         if (eventData == null)
                                         {
                                             msgBox.AppendText($"Syntax error 58: State {stateName} of class {className} has events but no event data defined. \r\n");
@@ -306,10 +311,14 @@ namespace Parsing
                                         {
                                             var eventName = stateEvent?.ToString();
 
+
                                             foreach (var data in eventData)
                                             {
                                                 var dataName = data.ToString();
-                                                if (!dataStores.Contains(dataName) && !controlStores.Contains(dataName))
+                                                Debug.WriteLine($"dn : {dataName}");
+                                                controlStores.ToList<String>().ForEach(x => Debug.WriteLine($"dns : {x}"));
+
+                                                if (!dataStores.First().Contains(dataName) && !controlStores.Contains(dataName))
                                                 {
                                                     msgBox.AppendText($"Syntax error 58: Event data {dataName} for event {eventName} in state {stateName} of class {className} is not available. \r\n");
                                                     return false;
@@ -319,7 +328,7 @@ namespace Parsing
                                     }
                                     else
                                     {
-                                        msgBox.AppendText($"Syntax error 58: State {stateName} of class {className} has no events defined. \r\n");
+                                        msgBox.AppendText($"Syntax error 58: State {stateName} of class {className} has no events defined. 2 \r\n");
                                         return false;
                                     }
                                 }
