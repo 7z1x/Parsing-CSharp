@@ -1292,10 +1292,10 @@ namespace Parsing
                 }
 
                 // Find communication model and check subsystems
-                var communicationModel = jsonArray.FirstOrDefault(x => x["type"]?.ToString() == "communication_model"); // Tanda 1: Menambahkan pencarian untuk communication_model
+                var communicationModel = jsonArray.FirstOrDefault(x => x["type"]?.ToString() == "subsystem_communication_model");
                 if (communicationModel != null)
                 {
-                    var subsystemsArray = communicationModel["subsystems"] as JArray; // Tanda 2: Mengambil array subsystems dari communication_model
+                    var subsystemsArray = communicationModel["subsystems"] as JArray;
                     if (subsystemsArray != null)
                     {
                         foreach (var subsystem in subsystemsArray)
@@ -1328,6 +1328,7 @@ namespace Parsing
                 return false;
             }
         }
+
 
 
         public static bool Point72(Parsing form1, JArray jsonArray)
