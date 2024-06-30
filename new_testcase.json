@@ -8,6 +8,37 @@
       "class_id": "1",
       "class_name": "mahasiswa",
       "KL": "mhs",
+      "typedata": "dataStore",
+      "store_name": [
+        "setActive",
+        "onActive",
+        "setCuti",
+        "onCuti",
+        "setAlumni",
+        "setDropout",
+        "active",
+        "cuti",
+        "available",
+        "not_available",
+        "onTime",
+        "late",
+        "init",
+        "pengajuan_topik",
+        "pemilihan_pembimbing",
+        "penyusunan_proposal",
+        "penyusunan_laporan",
+        "seminar_hasil",
+        "sidang",
+        "lulus",
+        "active",
+        "expired",
+        "active",
+        "completed",
+        "active",
+        "completed",
+        "resume",
+        "pause"
+      ],
       "attributes": [
         {
           "attribute_type": "naming_attribute",
@@ -42,7 +73,14 @@
           "state_name": "mahasiswa",
           "state_value": "active",
           "state_type": "string",
-          "state_event": [ "setActive", "onActive" ],
+          "state_event": [
+            "setActive",
+            "onActive"
+          ],
+          "event_data": [
+            "setActive",
+            "onActive"
+          ],
           "KL": "mhs"
         },
         {
@@ -50,7 +88,14 @@
           "state_name": "mahasiswa",
           "state_value": "cuti",
           "state_type": "string",
-          "state_event": [ "setCuti", "onCuti" ],
+          "state_event": [
+            "setCuti",
+            "onCuti"
+          ],
+          "event_data": [
+            "setCuti",
+            "onCuti"
+          ],
           "KL": "mhs"
         },
         {
@@ -58,7 +103,12 @@
           "state_name": "mahasiswa",
           "state_value": "alumni",
           "state_type": "string",
-          "state_event": [ "setAlumni" ],
+          "state_event": [
+            "setAlumni"
+          ],
+          "event_data": [
+            "setAlumni"
+          ],
           "KL": "mhs"
         },
         {
@@ -66,7 +116,12 @@
           "state_name": "mahasiswa",
           "state_value": "dropout",
           "state_type": "string",
-          "state_event": [ "setDropout" ],
+          "state_event": [
+            "setDropout"
+          ],
+          "event_data": [
+            "setDropout"
+          ],
           "KL": "mhs"
         }
       ]
@@ -100,17 +155,34 @@
           "state_name": "dosen",
           "state_value": "active",
           "state_type": "string",
-          "state_event": [ "setActive", "onActive" ],
-          "KL": "dsn"
+          "state_event": [
+            "setActive",
+            "onActive"
+          ],
+          "KL": "dsn",
+          "event_data": [
+            "active"
+          ]
         },
         {
           "state_id": "6",
           "state_name": "dosen",
           "state_value": "cuti",
           "state_type": "string",
-          "state_event": [ "setCuti", "onCuti" ],
-          "KL": "dsn"
+          "state_event": [
+            "setCuti",
+            "onCuti"
+          ],
+          "KL": "dsn",
+          "event_data": [
+            "cuti"
+          ]
         }
+      ],
+      "typedata": "dataStore",
+      "store_name": [
+        "active",
+        "cuti"
       ]
     },
     {
@@ -146,17 +218,34 @@
           "state_name": "mata_kuliah",
           "state_value": "available",
           "state_type": "string",
-          "state_event": [ "setAvailable", "onAvailable" ],
-          "KL": "mtk"
+          "state_event": [
+            "setAvailable",
+            "onAvailable"
+          ],
+          "KL": "mtk",
+          "event_data": [
+            "available"
+          ]
         },
         {
           "state_id": "8",
           "state_name": "mata_kuliah",
           "state_value": "not_available",
           "state_type": "string",
-          "state_event": [ "setNotAvailable", "onNotAvailable" ],
-          "KL": "mtk"
+          "state_event": [
+            "setNotAvailable",
+            "onNotAvailable"
+          ],
+          "KL": "mtk",
+          "event_data": [
+            "not_available"
+          ]
         }
+      ],
+      "typedata": "dataStore",
+      "store_name": [
+        "available",
+        "not_available"
       ]
     },
     {
@@ -196,7 +285,8 @@
             "data_type": "id"
           }
         ]
-      }
+      },
+      "typedata": "dataStore"
     },
     {
       "type": "association",
@@ -235,7 +325,8 @@
             "data_type": "id"
           }
         ]
-      }
+      },
+      "typedata": "dataStore"
     },
     {
       "type": "association",
@@ -274,7 +365,8 @@
             "data_type": "id"
           }
         ]
-      }
+      },
+      "typedata": "dataStore"
     },
     {
       "type": "class",
@@ -309,17 +401,32 @@
           "state_name": "uang_kuliah_tunggal",
           "state_value": "onTime",
           "state_type": "string",
-          "state_event": [ "setOnTime" ],
-          "KL": "ukt"
+          "state_event": [
+            "setOnTime"
+          ],
+          "KL": "ukt",
+          "event_data": [
+            "onTime"
+          ]
         },
         {
           "state_id": "10",
           "state_name": "uang_kuliah_tunggal",
           "state_value": "late",
           "state_type": "string",
-          "state_event": [ "setLate" ],
-          "KL": "ukt"
+          "state_event": [
+            "setLate"
+          ],
+          "KL": "ukt",
+          "event_data": [
+            "late"
+          ]
         }
+      ],
+      "typedata": "dataStore",
+      "store_name": [
+        "onTime",
+        "late"
       ]
     },
     {
@@ -336,7 +443,8 @@
           "class_name": "uang_kuliah_tunggal",
           "class_multiplicity": "1"
         }
-      ]
+      ],
+      "typedata": "dataStore"
     },
     {
       "type": "class",
@@ -361,65 +469,116 @@
           "state_name": "tugas_akhir",
           "state_value": "init",
           "state_type": "string",
-          "state_event": [ "setInit" ],
-          "KL": "ta"
+          "state_event": [
+            "setInit"
+          ],
+          "KL": "ta",
+          "event_data": [
+            "init"
+          ]
         },
         {
           "state_id": "12",
           "state_name": "tugas_akhir",
           "state_value": "pengajuan_topik",
           "state_type": "string",
-          "state_event": [ "setPengajuanTopik" ],
-          "KL": "ta"
+          "state_event": [
+            "setPengajuanTopik"
+          ],
+          "KL": "ta",
+          "event_data": [
+            "pengajuan_topik"
+          ]
         },
         {
           "state_id": "13",
           "state_name": "tugas_akhir",
           "state_value": "pemilihan_pembimbing",
           "state_type": "string",
-          "state_event": [ "setPemilihanPembimbing" ],
-          "KL": "ta"
+          "state_event": [
+            "setPemilihanPembimbing"
+          ],
+          "KL": "ta",
+          "event_data": [
+            "pemilihan_pembimbing"
+          ]
         },
         {
           "state_id": "14",
           "state_name": "tugas_akhir",
           "state_value": "penyusunan_proposal",
           "state_type": "string",
-          "state_event": [ "setPenyusunanProposal" ],
-          "KL": "ta"
+          "state_event": [
+            "setPenyusunanProposal"
+          ],
+          "KL": "ta",
+          "event_data": [
+            "penyusunan_proposal"
+          ]
         },
         {
           "state_id": "15",
           "state_name": "tugas_akhir",
           "state_value": "penyusunan_laporan",
           "state_type": "string",
-          "state_event": [ "setPenyusunanLaporan" ],
-          "KL": "ta"
+          "state_event": [
+            "setPenyusunanLaporan"
+          ],
+          "KL": "ta",
+          "event_data": [
+            "penyusunan_laporan"
+          ]
         },
         {
           "state_id": "16",
           "state_name": "tugas_akhir",
           "state_value": "seminar_hasil",
           "state_type": "string",
-          "state_event": [ "setSeminarHasil" ],
-          "KL": "ta"
+          "state_event": [
+            "setSeminarHasil"
+          ],
+          "KL": "ta",
+          "event_data": [
+            "seminar_hasil"
+          ]
         },
         {
           "state_id": "17",
           "state_name": "tugas_akhir",
           "state_value": "sidang",
           "state_type": "string",
-          "state_event": [ "setSidang" ],
-          "KL": "ta"
+          "state_event": [
+            "setSidang"
+          ],
+          "KL": "ta",
+          "event_data": [
+            "sidang"
+          ]
         },
         {
           "state_id": "18",
           "state_name": "tugas_akhir",
           "state_value": "lulus",
           "state_type": "string",
-          "state_event": [ "setLulus" ],
-          "KL": "ta"
+          "state_event": [
+            "setLulus"
+          ],
+          "KL": "ta",
+          "event_data": [
+            "lulus"
+          ]
         }
+      ],
+      "typedata": "dataStore",
+      "store_name": [
+        "init",
+        "pengajuan_topik",
+        "pemilihan_pembimbing",
+        "penyusunan_proposal",
+        "penyusunan_laporan",
+        "seminar_hasil",
+        "sidang",
+        "lulus"
       ]
     },
     {
@@ -436,7 +595,8 @@
           "class_name": "tugas_akhir",
           "class_multiplicity": "1"
         }
-      ]
+      ],
+      "typedata": "dataStore"
     },
     {
       "type": "class",
@@ -476,17 +636,32 @@
           "state_name": "TIMER",
           "state_value": "active",
           "state_type": "string",
-          "state_event": [ "setActive" ],
-          "KL": "TIM"
+          "state_event": [
+            "setActive"
+          ],
+          "KL": "TIM",
+          "event_data": [
+            "active"
+          ]
         },
         {
           "state_id": "20",
           "state_name": "TIMER",
           "state_value": "expired",
           "state_type": "string",
-          "state_event": [ "setExpired" ],
-          "KL": "TIM"
+          "state_event": [
+            "setExpired"
+          ],
+          "KL": "TIM",
+          "event_data": [
+            "expired"
+          ]
         }
+      ],
+      "typedata": "dataStore",
+      "store_name": [
+        "active",
+        "expired"
       ]
     },
     {
@@ -503,7 +678,8 @@
           "class_name": "TIMER",
           "class_multiplicity": "1"
         }
-      ]
+      ],
+      "typedata": "dataStore"
     },
     {
       "type": "class",
@@ -533,17 +709,32 @@
           "state_name": "TIM1",
           "state_value": "active",
           "state_type": "string",
-          "state_event": [ "setActive" ],
-          "KL": "TIM1"
+          "state_event": [
+            "setActive"
+          ],
+          "KL": "TIM1",
+          "event_data": [
+            "active"
+          ]
         },
         {
           "state_id": "22",
           "state_name": "TIM1",
           "state_value": "completed",
           "state_type": "string",
-          "state_event": [ "setCompleted" ],
-          "KL": "TIM1"
+          "state_event": [
+            "setCompleted"
+          ],
+          "KL": "TIM1",
+          "event_data": [
+            "completed"
+          ]
         }
+      ],
+      "typedata": "dataStore",
+      "store_name": [
+        "active",
+        "completed"
       ]
     },
     {
@@ -560,7 +751,8 @@
           "class_name": "TIM1",
           "class_multiplicity": "1"
         }
-      ]
+      ],
+      "typedata": "dataStore"
     },
     {
       "type": "class",
@@ -590,17 +782,32 @@
           "state_name": "TIM2",
           "state_value": "active",
           "state_type": "string",
-          "state_event": [ "setActive" ],
-          "KL": "TIM2"
+          "state_event": [
+            "setActive"
+          ],
+          "KL": "TIM2",
+          "event_data": [
+            "active"
+          ]
         },
         {
           "state_id": "24",
           "state_name": "TIM2",
           "state_value": "completed",
           "state_type": "string",
-          "state_event": [ "setCompleted" ],
-          "KL": "TIM2"
+          "state_event": [
+            "setCompleted"
+          ],
+          "KL": "TIM2",
+          "event_data": [
+            "completed"
+          ]
         }
+      ],
+      "typedata": "dataStore",
+      "store_name": [
+        "active",
+        "completed"
       ]
     },
     {
@@ -617,10 +824,50 @@
           "class_name": "TIM2",
           "class_multiplicity": "1"
         }
-      ]
+      ],
+      "typedata": "dataStore"
+    },
+    {
+      "type": "subsystem_communication_model",
+      "name": "R8",
+      "subsystems": [
+        {
+          "sub_name": "daring"
+        },
+      ],
+      "typedata": "dataStore"
     }
   ],
   "OCM": [
+    {
+      "events": [
+        "setActive",
+        "onActive",
+        "setCuti",
+        "onCuti",
+        "setAlumni",
+        "setDropout",
+        "setAvailable",
+        "onAvailable",
+        "setNotAvailable",
+        "onNotAvailable",
+        "setOnTime",
+        "setLate",
+        "setInit",
+        "setPengajuanTopik",
+        "setPemilihanPembimbing",
+        "setPenyusunanProposal",
+        "setPenyusunanLaporan",
+        "setSeminarHasil",
+        "setSidang",
+        "setLulus",
+        "setExpired",
+        "setCompleted",
+        "setResume",
+        "onResume",
+        "pause"
+      ]
+    },
     {
       "name": "mahasiswa"
     },
@@ -641,6 +888,12 @@
     },
     {
       "name": "TIM2"
+    },
+    {
+      "name": "uji"
+    },
+    {
+      "name": "uji2"
     }
   ]
 }

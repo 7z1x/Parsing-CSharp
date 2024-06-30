@@ -39,12 +39,12 @@ namespace Parsing
                     }
                 }
 
-                return true; 
+                return true;
             }
             catch (Exception ex)
             {
                 msgBox.AppendText("Syntax error 1: " + ex.Message + "\r\n");
-                return false; 
+                return false;
             }
         }
         public static bool Point2(Parsing form1, JArray jsonArray)
@@ -75,7 +75,7 @@ namespace Parsing
                                 {
                                     string classId = classIdProperty.ToString();
                                     classIdsInClass.Add(classId);
-                                    
+
                                     if (attributesArray == null || !attributesArray.Any())
                                     {
                                         msgBox.AppendText($"Syntax error 2: Class {classId} in subsystem {subsystem["sub_name"]?.ToString()} does not have attributes.\r\n");
@@ -223,6 +223,12 @@ namespace Parsing
 
                 foreach (var subsystem in jsonArray)
                 {
+                    if (subsystem["model"] == null)
+                    {
+                        msgBox.AppendText("Syntax error point 3: Model not found\r\n");
+
+                        return false;
+                    }
                     foreach (var item in subsystem["model"])
                     {
                         if (!processItem(item))
@@ -230,6 +236,8 @@ namespace Parsing
                             return false;
                         }
                     }
+
+
                 }
 
                 return true;

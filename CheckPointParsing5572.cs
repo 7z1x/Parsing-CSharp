@@ -295,6 +295,7 @@ namespace Parsing
                                 foreach (var state in states)
                                 {
                                     var stateName = state["state_name"]?.ToString();
+                                    var stateId = state["state_id"]?.ToString();
                                     var stateEvents = state["state_event"] as JArray;
                                     var eventData = state["event_data"] as JArray;
                                     
@@ -303,7 +304,7 @@ namespace Parsing
 
                                         if (eventData == null)
                                         {
-                                            msgBox.AppendText($"Syntax error 58: State {stateName} of class {className} has events but no event data defined. \r\n");
+                                            msgBox.AppendText($"Syntax error 58: State {stateName} with id {stateId} of class {className} has events but no event data defined. \r\n");
                                             return false;
                                         }
 
@@ -320,7 +321,7 @@ namespace Parsing
 
                                                 if (!dataStores.First().Contains(dataName) && !controlStores.Contains(dataName))
                                                 {
-                                                    msgBox.AppendText($"Syntax error 58: Event data {dataName} for event {eventName} in state {stateName} of class {className} is not available. \r\n");
+                                                    msgBox.AppendText($"Syntax error 58: Event data {dataName} for event {eventName} in state {stateName} of class {className} is not available on {String.Join(",", dataStores )} or on .{String.Join(",", controlStores)} \r\n");
                                                     return false;
                                                 }
                                             }
@@ -1301,7 +1302,8 @@ namespace Parsing
                 }
 
                 // Find communication model and check subsystems
-                var communicationModel = jsonArray.FirstOrDefault(x => x["type"]?.ToString() == "subsystem_communication_model");
+                var communicationModel = jsonArray[0]["model"].FirstOrDefault(x => x["type"]?.ToString() == "subsystem_communication_model");
+                Debug.WriteLine(communicationModel.ToString());
                 if (communicationModel != null)
                 {
                     var subsystemsArray = communicationModel["subsystems"] as JArray;

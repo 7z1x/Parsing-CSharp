@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Parsing;
+using System.Diagnostics;
 
 namespace Parsing
 {
@@ -83,14 +84,17 @@ namespace Parsing
 
         private void btnCheck_Click(object sender, EventArgs e)
         {
-            if (fileNames == null || fileNames.Length == 0)
-            {
-                MessageBox.Show("Please select a folder containing JSON files first.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //if (fileNames == null || fileNames.Length == 0)
+            //{
+            //    MessageBox.Show("Please select a folder containing JSON files first.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                return;
-            }
+            //    return;
+            //}
+            //Debug.WriteLine(String.Join("\n", fileNames));
 
-            JArray jsonArray = this.ProcessJson(fileNames);
+            //JArray jsonArray = this.ProcessJson(fileNames);
+
+            JArray jsonArray = new JArray(JToken.Parse(File.ReadAllText("C:\\Users\\Victus\\source\\repos\\Parsing-CSharp\\new_testcase.json")));
 
             msgBox.Clear();
 

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -217,12 +218,15 @@ namespace Parsing
                             {
                                 foreach (var state in states)
                                 {
+                                    Debug.WriteLine("line 221");
+
                                     var stateEvents = state["state_event"] as JArray;
                                     if (stateEvents != null)
                                     {
                                         foreach (var eventName in stateEvents)
                                         {
                                             eventsInvolved.Add(eventName.ToString());
+
                                         }
                                     }
                                 }
@@ -241,11 +245,16 @@ namespace Parsing
                         foreach (var element in ocm)
                         {
                             var elementEvents = element["events"] as JArray;
+                            Debug.WriteLine("sada" + elementEvents);
+
                             if (elementEvents != null)
                             {
+
                                 foreach (var evt in elementEvents)
                                 {
+
                                     var eventName = evt.ToString();
+
                                     if (eventsInvolved.Contains(eventName))
                                     {
                                         eventsInvolved.Remove(eventName);
