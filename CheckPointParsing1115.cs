@@ -359,7 +359,7 @@ namespace Parsing
                             {
                                 foreach (var state in item["states"])
                                 {
-                                    var stateName = state["state_name"]?.ToString();
+                                    var stateName = state["state_model_name"]?.ToString();
                                     var stateKeyLetter = state["KL"]?.ToString();
 
                                     if (stateName != className || stateKeyLetter != classKeyLetter)
@@ -404,7 +404,7 @@ namespace Parsing
                                 {
                                     foreach (var state in associationModel["states"])
                                     {
-                                        var stateName = state["state_name"]?.ToString();
+                                        var stateName = state["state_model_name"]?.ToString();
                                         var stateKeyLetter = state["KL"]?.ToString();
 
                                         if (stateName != associationClassName || stateKeyLetter != associationClassKeyLetter)

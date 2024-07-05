@@ -56,7 +56,7 @@ namespace Parsing
                                     var stateEvents = state["state_event"]?.ToArray();
                                     if (stateEvents == null || stateEvents.Length == 0)
                                     {
-                                        msgBox.AppendText($"Syntax error 22: State {state["state_name"]} does not generate any events.\r\n");
+                                        msgBox.AppendText($"Syntax error 22: State {state["state_model_name"]} does not generate any events.\r\n");
                                     }
                                 }
                             }
@@ -97,7 +97,7 @@ namespace Parsing
                                         var stateEvents = state["state_event"]?.ToArray();
                                         if (stateEvents == null || stateEvents.Length == 0)
                                         {
-                                            msgBox.AppendText($"Syntax error 22: State {state["state_name"]} does not generate any events.\r\n");
+                                            msgBox.AppendText($"Syntax error 22: State {state["state_model_name"]} does not generate any events.\r\n");
                                         }
                                     }
                                 }

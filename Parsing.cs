@@ -84,17 +84,15 @@ namespace Parsing
 
         private void btnCheck_Click(object sender, EventArgs e)
         {
-            //if (fileNames == null || fileNames.Length == 0)
-            //{
-            //    MessageBox.Show("Please select a folder containing JSON files first.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            if (fileNames == null || fileNames.Length == 0)
+            {
+                MessageBox.Show("Please select a folder containing JSON files first.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-            //    return;
-            //}
-            //Debug.WriteLine(String.Join("\n", fileNames));
+                return;
+            }
+            Debug.WriteLine(String.Join("\n", fileNames));
 
-            //JArray jsonArray = this.ProcessJson(fileNames);
-
-            JArray jsonArray = new JArray(JToken.Parse(File.ReadAllText("C:\\Users\\Victus\\source\\repos\\Parsing-CSharp\\new_testcase.json")));
+            JArray jsonArray = this.ProcessJson(fileNames);
 
             msgBox.Clear();
 
@@ -341,7 +339,7 @@ namespace Parsing
 
                 foreach (var state in states)
                 {
-                    string stateName = state["state_name"]?.ToString();
+                    string stateName = state["state_model_name"]?.ToString();
                     string stateModelName = $"{objectName}.{stateName}";
 
                     // Check uniqueness of state model
@@ -431,7 +429,7 @@ namespace Parsing
 
                                     foreach (var stateItem in statesArray)
                                     {
-                                        string stateName = stateItem["state_name"]?.ToString();
+                                        string stateName = stateItem["state_model_name"]?.ToString();
                                         string stateModelName = $"{modelName}.{stateName}";
 
                                         JToken eventsToken = stateItem["events"];

@@ -96,7 +96,7 @@ namespace Parsing
                             {
                                 foreach (var state in stateArray)
                                 {
-                                    var stateName = state["state_name"]?.ToString();
+                                    var stateName = state["state_model_name"]?.ToString();
                                     var stateEvent = state["state_event"]?.ToString();
                                     if (stateEvent != null)
                                     {
@@ -195,7 +195,7 @@ namespace Parsing
                         {
                             foreach (var state in item["states"])
                             {
-                                var stateName = state["state_name"]?.ToString();
+                                var stateName = state["state_model_name"]?.ToString();
 
                                 if (!stateEventsData.ContainsKey(stateName))
                                 {
@@ -330,7 +330,7 @@ namespace Parsing
                         {
                             foreach (var sub in states)
                             {
-                                var stateName = sub["state_name"]?.ToString();
+                                var stateName = sub["state_model_name"]?.ToString();
                                 var stateEvent = sub["state_event"]?.ToString();
                                 if (stateEvent != null)
                                 {

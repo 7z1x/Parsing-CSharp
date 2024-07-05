@@ -52,7 +52,7 @@
           "states": [
             {
               "state_id": "1",
-              "state_name": "aktif",
+              "state_model_name": "aktif",
               "state_value": "active",
               "state_type": "string",
               "state_event": [ "setActive", "onActive" ],
@@ -60,7 +60,7 @@
             },
             {
               "state_id": "2",
-              "state_name": "cuti",
+              "state_model_name": "cuti",
               "state_value": "cuti",
               "state_type": "string",
               "state_event": [ "setCuti", "onCuti" ],
@@ -68,14 +68,14 @@
             },
             {
               "state_id": "3",
-              "state_name": "alumni",
+              "state_model_name": "alumni",
               "state_value": "alumni",
               "state_type": "string",
               "state_event": [ "setAlumni" ]
             },
             {
               "state_id": "4",
-              "state_name": "dropout",
+              "state_model_name": "dropout",
               "state_value": "dropout",
               "state_type": "string",
               "state_event": [ "setDropout" ]
@@ -110,21 +110,21 @@
 
               "class_id": "1",
               "state_id": "2",
-              "state_name": "cuti",
+              "state_model_name": "cuti",
               "data_type": "inst_event"
             }
           ],
           "states": [
             {
               "state_id": "5",
-              "state_name": "aktif",
+              "state_model_name": "aktif",
               "state_value": "active",
               "state_type": "string",
               "state_event": [ "setActive", "onActive" ]
             },
             {
               "state_id": "6",
-              "state_name": "cuti",
+              "state_model_name": "cuti",
               "state_value": "cuti",
               "state_type": "string",
               "state_event": [ "setCuti", "onCuti" ]
@@ -444,14 +444,14 @@
           "states": [
             {
               "state_id": "1",
-              "state_name": "resume",
+              "state_model_name": "resume",
               "state_value": "resume",
               "state_type": "string",
               "state_event": [ "setResume", "onResume" ]
             },
             {
               "state_id": "2",
-              "state_name": "pause",
+              "state_model_name": "pause",
               "state_value": "pause",
               "state_type": "string",
               "state_event": [ "setPause", "onPause" ]
@@ -484,7 +484,7 @@
           "states": [
             {
               "state_id": "1",
-              "state_name": "Terdaftar",
+              "state_model_name": "Terdaftar",
               "state_value": "Terdaftar",
               "state_type": "string",
               "state_event": [ "setTerdaftar" ],
@@ -493,7 +493,7 @@
             },
             {
               "state_id": "2",
-              "state_name": "Dalam Antrian",
+              "state_model_name": "Dalam Antrian",
               "state_value": "Dalam Antrian",
               "state_type": "string",
               "state_event": [ "setDalamAntrian" ],
@@ -507,7 +507,7 @@
             },
             {
               "state_id": "3",
-              "state_name": "Menunggu Persetujuan Prodi",
+              "state_model_name": "Menunggu Persetujuan Prodi",
               "state_value": "Menunggu Persetujuan Prodi",
               "state_type": "string",
               "state_event": [ "setMenungguPersetujuanProdi" ],

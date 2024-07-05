@@ -32,7 +32,7 @@
 			"states": [
 				{
 					"state_id": "1",
-					"state_name": "resume",
+					"state_model_name": "resume",
 					"state_value": "resume",
 					"state_type": "string",
 					"state_event": [ "setResume", "onResume" ],
@@ -40,7 +40,7 @@
 				},
 				{
 					"state_id": "2",
-					"state_name": "pause",
+					"state_model_name": "pause",
 					"state_value": "pause",
 					"state_type": "string",
 					"state_event": [ "pause" ],
@@ -78,7 +78,7 @@
 			"states": [
 				{
 					"state_id": "1",
-					"state_name": "resume",
+					"state_model_name": "resume",
 					"state_value": "resume",
 					"state_type": "string",
 					"state_event": [ "setResume", "onResume" ],
@@ -86,7 +86,7 @@
 				},
 				{
 					"state_id": "2",
-					"state_name": "pause",
+					"state_model_name": "pause",
 					"state_value": "pause",
 					"state_type": "string",
 					"state_event": [ "pause" ],

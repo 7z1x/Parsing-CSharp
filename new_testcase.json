@@ -70,7 +70,7 @@
       "states": [
         {
           "state_id": "1",
-          "state_name": "mahasiswa",
+          "state_model_name": "mahasiswa",
           "state_value": "active",
           "state_type": "string",
           "state_event": [
@@ -85,7 +85,7 @@
         },
         {
           "state_id": "2",
-          "state_name": "mahasiswa",
+          "state_model_name": "mahasiswa",
           "state_value": "cuti",
           "state_type": "string",
           "state_event": [
@@ -100,7 +100,7 @@
         },
         {
           "state_id": "3",
-          "state_name": "mahasiswa",
+          "state_model_name": "mahasiswa",
           "state_value": "alumni",
           "state_type": "string",
           "state_event": [
@@ -113,7 +113,7 @@
         },
         {
           "state_id": "4",
-          "state_name": "mahasiswa",
+          "state_model_name": "mahasiswa",
           "state_value": "dropout",
           "state_type": "string",
           "state_event": [
@@ -152,7 +152,7 @@
       "states": [
         {
           "state_id": "5",
-          "state_name": "dosen",
+          "state_model_name": "dosen",
           "state_value": "active",
           "state_type": "string",
           "state_event": [
@@ -166,7 +166,7 @@
         },
         {
           "state_id": "6",
-          "state_name": "dosen",
+          "state_model_name": "dosen",
           "state_value": "cuti",
           "state_type": "string",
           "state_event": [
@@ -215,7 +215,7 @@
       "states": [
         {
           "state_id": "7",
-          "state_name": "mata_kuliah",
+          "state_model_name": "mata_kuliah",
           "state_value": "available",
           "state_type": "string",
           "state_event": [
@@ -229,7 +229,7 @@
         },
         {
           "state_id": "8",
-          "state_name": "mata_kuliah",
+          "state_model_name": "mata_kuliah",
           "state_value": "not_available",
           "state_type": "string",
           "state_event": [
@@ -398,7 +398,7 @@
       "states": [
         {
           "state_id": "9",
-          "state_name": "uang_kuliah_tunggal",
+          "state_model_name": "uang_kuliah_tunggal",
           "state_value": "onTime",
           "state_type": "string",
           "state_event": [
@@ -411,7 +411,7 @@
         },
         {
           "state_id": "10",
-          "state_name": "uang_kuliah_tunggal",
+          "state_model_name": "uang_kuliah_tunggal",
           "state_value": "late",
           "state_type": "string",
           "state_event": [
@@ -466,7 +466,7 @@
       "states": [
         {
           "state_id": "11",
-          "state_name": "tugas_akhir",
+          "state_model_name": "tugas_akhir",
           "state_value": "init",
           "state_type": "string",
           "state_event": [
@@ -479,7 +479,7 @@
         },
         {
           "state_id": "12",
-          "state_name": "tugas_akhir",
+          "state_model_name": "tugas_akhir",
           "state_value": "pengajuan_topik",
           "state_type": "string",
           "state_event": [
@@ -492,7 +492,7 @@
         },
         {
           "state_id": "13",
-          "state_name": "tugas_akhir",
+          "state_model_name": "tugas_akhir",
           "state_value": "pemilihan_pembimbing",
           "state_type": "string",
           "state_event": [
@@ -505,7 +505,7 @@
         },
         {
           "state_id": "14",
-          "state_name": "tugas_akhir",
+          "state_model_name": "tugas_akhir",
           "state_value": "penyusunan_proposal",
           "state_type": "string",
           "state_event": [
@@ -518,7 +518,7 @@
         },
         {
           "state_id": "15",
-          "state_name": "tugas_akhir",
+          "state_model_name": "tugas_akhir",
           "state_value": "penyusunan_laporan",
           "state_type": "string",
           "state_event": [
@@ -531,7 +531,7 @@
         },
         {
           "state_id": "16",
-          "state_name": "tugas_akhir",
+          "state_model_name": "tugas_akhir",
           "state_value": "seminar_hasil",
           "state_type": "string",
           "state_event": [
@@ -544,7 +544,7 @@
         },
         {
           "state_id": "17",
-          "state_name": "tugas_akhir",
+          "state_model_name": "tugas_akhir",
           "state_value": "sidang",
           "state_type": "string",
           "state_event": [
@@ -557,7 +557,7 @@
         },
         {
           "state_id": "18",
-          "state_name": "tugas_akhir",
+          "state_model_name": "tugas_akhir",
           "state_value": "lulus",
           "state_type": "string",
           "state_event": [
@@ -633,7 +633,7 @@
       "states": [
         {
           "state_id": "19",
-          "state_name": "TIMER",
+          "state_model_name": "TIMER",
           "state_value": "active",
           "state_type": "string",
           "state_event": [
@@ -646,7 +646,7 @@
         },
         {
           "state_id": "20",
-          "state_name": "TIMER",
+          "state_model_name": "TIMER",
           "state_value": "expired",
           "state_type": "string",
           "state_event": [
@@ -706,7 +706,7 @@
       "states": [
         {
           "state_id": "21",
-          "state_name": "TIM1",
+          "state_model_name": "TIM1",
           "state_value": "active",
           "state_type": "string",
           "state_event": [
@@ -719,7 +719,7 @@
         },
         {
           "state_id": "22",
-          "state_name": "TIM1",
+          "state_model_name": "TIM1",
           "state_value": "completed",
           "state_type": "string",
           "state_event": [
@@ -779,7 +779,7 @@
       "states": [
         {
           "state_id": "23",
-          "state_name": "TIM2",
+          "state_model_name": "TIM2",
           "state_value": "active",
           "state_type": "string",
           "state_event": [
@@ -792,7 +792,7 @@
         },
         {
           "state_id": "24",
-          "state_name": "TIM2",
+          "state_model_name": "TIM2",
           "state_value": "completed",
           "state_type": "string",
           "state_event": [

@@ -294,7 +294,7 @@ namespace Parsing
                             {
                                 foreach (var state in states)
                                 {
-                                    var stateName = state["state_name"]?.ToString();
+                                    var stateName = state["state_model_name"]?.ToString();
                                     var stateId = state["state_id"]?.ToString();
                                     var stateEvents = state["state_event"] as JArray;
                                     var eventData = state["event_data"] as JArray;
